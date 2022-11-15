@@ -5,6 +5,10 @@ VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusiCom", "MusiCom\MusiCom.csproj", "{C973936D-5C20-4F34-8060-F2C670F45501}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusiCom.Infrastructure", "MusiCom.Infrastructure\MusiCom.Infrastructure.csproj", "{5B118D05-1A8C-4A26-B0F5-BA79CA3893B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusiCom.Core", "MusiCom.Core\MusiCom.Core.csproj", "{7A39FFFD-F5C3-41E3-8367-32753D427941}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{C973936D-5C20-4F34-8060-F2C670F45501}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C973936D-5C20-4F34-8060-F2C670F45501}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C973936D-5C20-4F34-8060-F2C670F45501}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B118D05-1A8C-4A26-B0F5-BA79CA3893B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B118D05-1A8C-4A26-B0F5-BA79CA3893B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B118D05-1A8C-4A26-B0F5-BA79CA3893B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B118D05-1A8C-4A26-B0F5-BA79CA3893B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A39FFFD-F5C3-41E3-8367-32753D427941}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A39FFFD-F5C3-41E3-8367-32753D427941}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A39FFFD-F5C3-41E3-8367-32753D427941}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A39FFFD-F5C3-41E3-8367-32753D427941}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

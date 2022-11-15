@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace MusiCom.Data
+namespace MusiCom.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
