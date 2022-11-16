@@ -19,6 +19,12 @@ namespace MusiCom.Infrastructure.Data
         /// </summary>
         public class UserC
         {
+            public const int FirstNameMaxLength = 50;
+            public const int FirstNameMinLength = 2;
+
+            public const int LastNameMaxLength = 50;
+            public const int LastNameMinLength = 2;
+
             public const int UserNameMaxLength = 30;
             public const int UserNameMinLength = 3;
 

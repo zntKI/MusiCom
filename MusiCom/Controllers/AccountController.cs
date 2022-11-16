@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MusiCom.Infrastructure.Data.Entities;
 using MusiCom.Models.User;
 
 namespace MusiCom.Controllers
@@ -11,10 +12,10 @@ namespace MusiCom.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly SignInManager<IdentityUser<Guid>> signInManager;
-        private readonly UserManager<IdentityUser<Guid>> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public AccountController(SignInManager<IdentityUser<Guid>> signInManager, UserManager<IdentityUser<Guid>> userManager)
+        public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
@@ -52,7 +53,7 @@ namespace MusiCom.Controllers
                 return View(model);
             }
 
-            var user = new IdentityUser<Guid>
+            var user = new ApplicationUser
             {
                 UserName = model.UserName,
                 Email = model.Email
