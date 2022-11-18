@@ -16,5 +16,7 @@ namespace MusiCom.Infrastructure.Data.Entities
 
         [MaxLength(LastNameMaxLength)]
         public string? LastName { get; set; }
+
+        public byte[]? Photo { get; set; }
     }
 }

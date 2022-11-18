@@ -55,6 +55,8 @@ namespace MusiCom.Controllers
 
             var user = new ApplicationUser
             {
+                FirstName= model.FirstName,
+                LastName= model.LastName,
                 UserName = model.UserName,
                 Email = model.Email
             };
