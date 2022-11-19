@@ -9,6 +9,9 @@ using static MusiCom.Infrastructure.Data.DataConstraints.UserC;
 
 namespace MusiCom.Infrastructure.Data.Entities
 {
+    /// <summary>
+    /// Extension data for the IdentityUser class
+    /// </summary>
     public class ApplicationUser : IdentityUser<Guid>
     {
         [MaxLength(FirstNameMaxLength)]

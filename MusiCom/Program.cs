@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MusiCom.Core.Contracts;
+using MusiCom.Core.Services;
 using MusiCom.Infrastructure.Data;
 using MusiCom.Infrastructure.Data.Entities;
 

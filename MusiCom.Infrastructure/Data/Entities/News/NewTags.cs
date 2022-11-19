@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MusiCom.Infrastructure.Data.Entities.News
 {
+    /// <summary>
+    /// Mapping Table between News and Tags
+    /// </summary>
     public class NewTags
     {
         [Required]

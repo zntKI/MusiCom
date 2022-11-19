@@ -4,6 +4,9 @@ using static MusiCom.Infrastructure.Data.DataConstraints.EventC;
 
 namespace MusiCom.Infrastructure.Data.Entities.Events
 {
+    /// <summary>
+    /// Contains data for somekind of Musical Event
+    /// </summary>
     public class Event
     {
         [Key]
@@ -20,12 +23,18 @@ namespace MusiCom.Infrastructure.Data.Entities.Events
         [MaxLength(DescriptionMaxLength)]
         public string Description { get; set; } = null!;
 
+        /// <summary>
+        /// The Artist who have posted the Event
+        /// </summary>
         [Required]
         [ForeignKey(nameof(Artist))]
         public Guid ArtistId { get; set; }
 
         public ApplicationUser Artist { get; set; } = null!;
 
+        /// <summary>
+        /// Posts related to the Event
+        /// </summary>
         public ICollection<EventPost> EventPosts { get; set; } = new List<EventPost>();
 
         [Required]

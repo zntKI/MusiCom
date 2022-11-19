@@ -4,6 +4,9 @@ using static MusiCom.Infrastructure.Data.DataConstraints.EventPostC;
 
 namespace MusiCom.Infrastructure.Data.Entities.Events
 {
+    /// <summary>
+    /// Contains Data for User Posts related to a given Event
+    /// </summary>
     public class EventPost
     {
         [Key]
@@ -26,6 +29,9 @@ namespace MusiCom.Infrastructure.Data.Entities.Events
 
         public Event Event { get; set; } = null!;
 
+        /// <summary>
+        /// The User who have posted it
+        /// </summary>
         [Required]
         [ForeignKey(nameof(User))]
         public Guid UserId { get; init; }

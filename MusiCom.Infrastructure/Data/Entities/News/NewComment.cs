@@ -4,6 +4,9 @@ using static MusiCom.Infrastructure.Data.DataConstraints.NewCommentC;
 
 namespace MusiCom.Infrastructure.Data.Entities.News
 {
+    /// <summary>
+    /// Contains data for the Comments of a given Musical New
+    /// </summary>
     public class NewComment
     {
         [Key]
@@ -24,12 +27,18 @@ namespace MusiCom.Infrastructure.Data.Entities.News
         [Required]
         public int NumberOfDislikes { get; set; }
 
+        /// <summary>
+        /// The New to which it belongs
+        /// </summary>
         [Required]
         [ForeignKey(nameof(New))]
         public Guid NewId { get; init; }
 
         public New New { get; set; } = null!;
 
+        /// <summary>
+        /// The User who have posted it
+        /// </summary>
         [Required]
         [ForeignKey(nameof(User))]
         public Guid UserId { get; init; }

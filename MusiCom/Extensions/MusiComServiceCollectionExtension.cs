@@ -1,4 +1,6 @@
-﻿using MusiCom.Infrastructure.Data.Common;
+﻿using MusiCom.Core.Contracts;
+using MusiCom.Core.Services;
+using MusiCom.Infrastructure.Data.Common;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -15,7 +17,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IRepository, Repository>();
-            
+            services.AddScoped<IGenreService, GenreService>();
+            services.AddScoped<ITagService, TagService>();
+
             return services;
         }
     }
