@@ -56,7 +56,7 @@ namespace MusiCom.Controllers
 
             await genreService.CreateGenreAsync(model);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("All", "Genre");
         }
 
         /// <summary>

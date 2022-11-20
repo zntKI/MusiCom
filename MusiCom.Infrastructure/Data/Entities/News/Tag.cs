@@ -21,7 +21,7 @@ namespace MusiCom.Infrastructure.Data.Entities.News
         public ICollection<NewTags> News { get; set; } = new List<NewTags>();
 
         [Required]
-        public DateTime DateOfCreation { get; init; }
+        public DateTime DateOfCreation { get; set; }
 
         [Required]
         public bool IsDeleted { get; set; }
