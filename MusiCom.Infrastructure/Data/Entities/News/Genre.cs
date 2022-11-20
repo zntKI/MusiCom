@@ -22,7 +22,7 @@ namespace MusiCom.Infrastructure.Data.Entities.News
         public ICollection<New> News { get; set; } = new List<New>();
 
         [Required]
-        public DateTime DateOfCreation { get; init; }
+        public DateTime DateOfCreation { get; set; }
 
         [Required]
         public bool IsDeleted { get; set; }

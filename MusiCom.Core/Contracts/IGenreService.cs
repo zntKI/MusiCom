@@ -1,9 +1,5 @@
 ﻿using MusiCom.Core.Models.Genre;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MusiCom.Infrastructure.Data.Entities.News;
 
 namespace MusiCom.Core.Contracts
 {
@@ -13,5 +9,13 @@ namespace MusiCom.Core.Contracts
     public interface IGenreService
     {
         Task CreateGenreAsync(GenreViewModel model);
+
+        IEnumerable<GenreAllViewModel> GetAllGenres();
+
+        Task<Genre> GetGenreByIdAsync(Guid Id);
+
+        Task EditGenreAsync(Guid id, GenreAllViewModel model);
+
+        Task DeleteGenreAsync(Guid id);
     }
 }
