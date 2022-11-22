@@ -4,7 +4,7 @@ using static MusiCom.Infrastructure.Data.DataConstraints.GenreC;
 namespace MusiCom.Core.Models.Genre
 {
     /// <summary>
-    /// Contains Genre data
+    /// Contains Genre data for Adding
     /// </summary>
     public class GenreViewModel
     {

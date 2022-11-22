@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MusiCom.Core.Contracts;
 using MusiCom.Models;
 using System.Diagnostics;
 
@@ -6,16 +7,22 @@ namespace MusiCom.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly INewServices newService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(INewServices _newServices)
         {
-            _logger = logger;
+            newService = _newServices;
         }
 
+        /// <summary>
+        /// Presents the last three News
+        /// </summary>
+        /// <returns>A View</returns>
         public IActionResult Index()
         {
-            return View();
+            var news = newService.GetLastThreeNewsAsync();
+
+            return View(news);
         }
 
         public IActionResult Privacy()

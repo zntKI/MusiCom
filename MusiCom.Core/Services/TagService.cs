@@ -67,30 +67,20 @@ namespace MusiCom.Core.Services
         /// </summary>
         /// <returns>All Tags</returns>
         //TODO:
-        public IEnumerable<TagAllViewModel> GetAllTags()
+        public IEnumerable<TagNewAllViewModel> GetAllTags()
         {
-            List<TagAllViewModel> models = new List<TagAllViewModel>();
-
-            var entities = repo.All<Tag>();
-
-            foreach (var entity in entities)
-            {
-                if (entity.IsDeleted == true)
+            var models = repo.All<Tag>()
+                .Where(t => t.IsDeleted == false)
+                .Select(t => new TagNewAllViewModel()
                 {
-                    continue;
-                }
+                    Id = t.Id,
+                    Name = t.Name,
+                    IsDeleted = t.IsDeleted,
+                    DateOfCreation = t.DateOfCreation,
+                })
+                .OrderByDescending(t => t.DateOfCreation);
 
-                var model = new TagAllViewModel()
-                {
-                    Id = entity.Id,
-                    Name = entity.Name,
-                    DateOfCreation = entity.DateOfCreation,
-                };
-
-                models.Add(model);
-            }
-
-            return models.OrderByDescending(m => m.DateOfCreation);
+            return models;
         }
 
         /// <summary>

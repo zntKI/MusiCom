@@ -68,28 +68,17 @@ namespace MusiCom.Core.Services
         //TODO:
         public IEnumerable<GenreAllViewModel> GetAllGenres()
         {
-            List<GenreAllViewModel> models = new List<GenreAllViewModel>();
+            var models = repo.All<Genre>()
+                .Where(g => g.IsDeleted == false)
+                .Select(g => new GenreAllViewModel()
+                { 
+                    Id = g.Id,
+                    Name = g.Name,
+                    DateOfCreation = g.DateOfCreation
+                })
+                .OrderByDescending(g => g.DateOfCreation);
 
-            var entities = repo.All<Genre>();
-
-            foreach (var entity in entities)
-            {
-                if (entity.IsDeleted == true)
-                {
-                    continue;
-                }
-
-                var model = new GenreAllViewModel()
-                {
-                    Id = entity.Id,
-                    Name = entity.Name,
-                    DateOfCreation = entity.DateOfCreation,
-                };
-
-                models.Add(model);
-            }
-
-            return models.OrderByDescending(m => m.DateOfCreation);
+            return models;
         }
 
         /// <summary>

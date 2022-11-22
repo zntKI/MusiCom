@@ -1,0 +1,72 @@
+﻿@using MusiCom.Core.Models.New;
+@model NewAddViewModel
+
+@{
+    ViewData["Title"] = "Create a New";
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <section>
+            <form id="new" method="post" enctype="multipart/form-data">
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="text-center mb-3">
+                    <label asp-for="@Model.Title" class="form-label">New Title</label>
+                    <input asp-for="@Model.Title" class="form-control" autocomplete="newtitle" aria-required="true" />
+                    <span asp-validation-for="@Model.Title" class="text-danger"></span>
+                </div>
+                <div class="text-center mb-3">
+                    <label asp-for="@Model.TitlePhoto" class="form-label">Title Photo</label>
+                    <input type="file" id="files" asp-for="@Model.TitlePhoto" />
+                    <span asp-validation-for="@Model.TitlePhoto" class="text-danger"></span>
+                </div>
+                <div class="text-center mb-3">
+                    <label asp-for="@Model.Content" class="form-label">New Content</label>
+                    <textarea asp-for="@Model.Content" class="form-control" autocomplete="content" aria-required="true"></textarea>
+                    <span asp-validation-for="@Model.Content" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="@Model.GenreId" class="form-label">Genre</label>
+                    <select asp-for="@Model.GenreId" class="form-control">
+                        @foreach (var genre in Model.Genres)
+                        {
+                            <option value="@genre.Id">@genre.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="GenreId" class="text-danger"></span>
+                </div>
+                <div>
+                    <label asp-for="@Model.Tags" class="form-label">Tags</label>
+                    <select asp-for="@Model.Tags" asp-items="@Model.TagsAll" multiple multiselect-search="true">
+                        @*@foreach (var tag in Model.TagsAll)
+                        {
+                        <option>@tag.Name</option>
+                        }*@
+                    </select>
+                    @*<select asp-for="@Model.Tags" asp-items="@Model.TagsAll" class="custom-select" name="select" multiple multiselect-search="true">
+                        @foreach (var tag in Model.TagsAll)
+                        {
+                            <option>@tag.Name</option>
+                        }
+                    </select>*@
+                </div>
+                <div class="text-center">
+                    <button id="add-submit" type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+<style type="text/css">
+    select {
+        width: 20em;
+    }
+</style>
+
+<script type="text/javascript" src="~/js/multiselect-dropdown.js"></script>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

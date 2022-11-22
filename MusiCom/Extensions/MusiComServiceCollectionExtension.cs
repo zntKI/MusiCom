@@ -19,6 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<IGenreService, GenreService>();
             services.AddScoped<ITagService, TagService>();
+            services.AddScoped<INewServices, NewService>();
 
             return services;
         }
