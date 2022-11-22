@@ -1,4 +1,5 @@
-﻿using MusiCom.Infrastructure.Data.Entities;
+﻿using MusiCom.Core.Models.Comment;
+using MusiCom.Infrastructure.Data.Entities;
 using MusiCom.Infrastructure.Data.Entities.News;
 
 namespace MusiCom.Core.Models.New
@@ -8,6 +9,8 @@ namespace MusiCom.Core.Models.New
     /// </summary>
     public class NewDetailsViewModel
     {
+        public Guid Id { get; set; }
+
         public string Title { get; set; } = null!;
 
         public byte[] TitlePhoto { get; set; }
@@ -19,6 +22,8 @@ namespace MusiCom.Core.Models.New
         public ApplicationUser Editor { get; set; }
 
         public IEnumerable<Infrastructure.Data.Entities.News.Tag> Tags { get; set; } = new List<Infrastructure.Data.Entities.News.Tag>();
+
+        public CommentAddViewModel CurrentComment { get; set; }
 
         public IEnumerable<NewComment> NewComments { get; set; } = new List<NewComment>();
     }

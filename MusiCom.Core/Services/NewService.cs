@@ -57,6 +57,19 @@ namespace MusiCom.Core.Services
         }
 
         /// <summary>
+        /// Gets All Comments attached to the New
+        /// </summary>
+        /// <param name="newId">New Id</param>
+        /// <returns>Collection of Comments</returns>
+        public ICollection<NewComment> GetAllCommentsForNew(Guid newId)
+        {
+            return repo.All<NewComment>()
+                    .Where(n => n.NewId == newId)
+                    .OrderByDescending(n => n.DateOfPost)
+                    .ToList();
+        }
+
+        /// <summary>
         /// Gets all tags which are attached to the given New
         /// </summary>
         /// <param name="newId">New Id</param>

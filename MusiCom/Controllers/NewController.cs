@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using MusiCom.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MusiCom.Infrastructure.Data.Entities.News;
+using MusiCom.Core.Models.Comment;
 
 namespace MusiCom.Controllers
 {
@@ -101,13 +102,15 @@ namespace MusiCom.Controllers
 
             NewDetailsViewModel model = new NewDetailsViewModel()
             {
+                Id = entity.Id,
                 Title = entity.Title,
                 TitlePhoto = entity.TitlePhoto,
                 Content = entity.Content,
                 Tags = newService.GetAllTagsForNew(entity.Id),
                 Genre = await genreService.GetGenreByIdAsync(entity.GenreId),
                 Editor = await userManager.FindByIdAsync(entity.EditorId.ToString()),
-                NewComments = entity.NewComments
+                NewComments = newService.GetAllCommentsForNew(Id),
+                CurrentComment = new CommentAddViewModel()
             };
 
             return View(model);

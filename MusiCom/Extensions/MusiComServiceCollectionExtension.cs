@@ -20,6 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IGenreService, GenreService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<INewServices, NewService>();
+            services.AddScoped<ICommentService, CommentService>();
 
             return services;
         }

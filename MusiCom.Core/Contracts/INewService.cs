@@ -16,5 +16,7 @@ namespace MusiCom.Core.Contracts
         Task<New> GetNewByIdAsync(Guid newId);
 
         ICollection<Tag> GetAllTagsForNew(Guid newId);
+
+        ICollection<NewComment> GetAllCommentsForNew(Guid newId);
     }
 }
