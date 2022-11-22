@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.New;
 using MusiCom.Infrastructure.Data.Common;
 using MusiCom.Infrastructure.Data.Entities.News;
+using System.Linq;
 
 namespace MusiCom.Core.Services
 {
@@ -56,6 +57,23 @@ namespace MusiCom.Core.Services
         }
 
         /// <summary>
+        /// Gets all tags which are attached to the given New
+        /// </summary>
+        /// <param name="newId">New Id</param>
+        /// <returns>Collection of Tag</returns>
+        public ICollection<Tag> GetAllTagsForNew(Guid newId)
+        {
+            return repo.All<NewTags>()
+                    .Include(nt => nt.Tag)
+                    .Where(nt => nt.NewId == newId)
+                    .Select(nt => new Tag()
+                    { 
+                        Id = nt.TagId,
+                        Name = nt.Tag.Name
+                    }).ToList();
+        }
+
+        /// <summary>
         /// Takes last three News stored in the Database
         /// </summary>
         /// <returns>Collection of NewAllViewModel</returns>
@@ -72,6 +90,16 @@ namespace MusiCom.Core.Services
                 });
 
             return news;
+        }
+
+        /// <summary>
+        /// Gets the New by Id
+        /// </summary>
+        /// <param name="newId">New Id</param>
+        /// <returns>New</returns>
+        public async Task<New> GetNewByIdAsync(Guid newId)
+        {
+            return await repo.GetByIdAsync<New>(newId);
         }
     }
 }

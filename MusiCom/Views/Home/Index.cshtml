@@ -14,14 +14,14 @@
             There are no houses in the system currently available
             so why don't you just add one?
         </p>
-        <hr class="my-4">
+        @*<hr class="my-4">
         <p class="lead">
-            @*@if (this.User.Identity.IsAuthenticated)
+            @if (this.User.Identity.IsAuthenticated)
             {
                 <a asp-controller="Houses" asp-action="Add" class="btn btn-primary btn-lg"
                     role="button">Add House</a>
-            }*@
-        </p>
+            }
+        </p>*@
     </div>
 }
 
@@ -32,13 +32,15 @@
         @for (int i = 0; i < news.Count(); i++)
         {
             var neww = news[i];
+            var base64 = Convert.ToBase64String(neww.TitlePhoto);
+            var imageSrc = string.Format("data:image/png;base64,{0}", base64);
             <div class="carousel-item @(i == 0 ? "active" : string.Empty)">
                 <img class="d-block w-100" style="height:500px"
-                 src="@neww.TitlePhoto" alt="@neww.Title">
+                 src="@imageSrc" alt="@neww.Title">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>
-                        <a class="btn btn-primary" asp-controller="Houses" asp-action="Details"
-                       asp-route-id="@neww.Id"> @neww.Title</a>
+                        <a class="btn btn-primary" asp-controller="New" asp-action="Details"
+                       asp-route-id="@neww.Id">@neww.Title</a>
                     </h5>
                 </div>
             </div>

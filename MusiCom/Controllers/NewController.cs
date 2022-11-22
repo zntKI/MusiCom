@@ -4,6 +4,7 @@ using MusiCom.Core.Models.New;
 using Microsoft.AspNetCore.Identity;
 using MusiCom.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MusiCom.Infrastructure.Data.Entities.News;
 
 namespace MusiCom.Controllers
 {
@@ -81,6 +82,35 @@ namespace MusiCom.Controllers
             await newService.CreateNewAsync(editor.Id, model, TitlePhoto);
 
             return RedirectToAction("Index", "Home");
+        }
+
+        /// <summary>
+        /// Presents the Details of a New
+        /// </summary>
+        /// <param name="Id">New Id</param>
+        /// <returns>A View with the NewModel</returns>
+        public async Task<IActionResult> Details(Guid Id)
+        {
+            New entity = await newService.GetNewByIdAsync(Id);
+
+            //TODO: Fix
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            NewDetailsViewModel model = new NewDetailsViewModel()
+            {
+                Title = entity.Title,
+                TitlePhoto = entity.TitlePhoto,
+                Content = entity.Content,
+                Tags = newService.GetAllTagsForNew(entity.Id),
+                Genre = await genreService.GetGenreByIdAsync(entity.GenreId),
+                Editor = await userManager.FindByIdAsync(entity.EditorId.ToString()),
+                NewComments = entity.NewComments
+            };
+
+            return View(model);
         }
     }
 }

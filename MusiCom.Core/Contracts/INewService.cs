@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MusiCom.Core.Models.New;
+using MusiCom.Infrastructure.Data.Entities.News;
 
 namespace MusiCom.Core.Contracts
 {
@@ -11,5 +12,9 @@ namespace MusiCom.Core.Contracts
         Task CreateNewAsync(Guid userId, NewAddViewModel model, IFormFile titlePhoto);
 
         IEnumerable<NewAllViewModel> GetLastThreeNewsAsync();
+
+        Task<New> GetNewByIdAsync(Guid newId);
+
+        ICollection<Tag> GetAllTagsForNew(Guid newId);
     }
 }
