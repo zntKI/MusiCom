@@ -31,6 +31,7 @@
                     <input type="file" id="files" asp-for="@Model.Photo" />
                     //<span asp-validation-for="@Model.Photo" class="text-danger"></span>
                     <button id="changeoraddphoto-submit" type="submit" class="btn btn-primary">Send</button>
+                    <a class="btn btn-danger asp-controller="Account" asp-action="DeletePhoto">Delete</a>
                 }
             </form>
         </div>

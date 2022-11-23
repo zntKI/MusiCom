@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using MusiCom.Core.Services;
 using MusiCom.Infrastructure.Data.Entities;
 using MusiCom.Models.User;
@@ -178,6 +179,27 @@ namespace MusiCom.Controllers
                 await Photo.CopyToAsync(stream);
                 user.Photo = stream.ToArray();
             }
+
+            await userManager.UpdateAsync(user);
+
+            return RedirectToAction("Details");
+        }
+
+        public async Task<IActionResult> DeletePhoto()
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            if (user.Photo == null)
+            {
+                return RedirectToAction("Details");
+            }
+
+            user.Photo = null;
 
             await userManager.UpdateAsync(user);
 
