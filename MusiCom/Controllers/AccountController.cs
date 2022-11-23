@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MusiCom.Core.Services;
 using MusiCom.Infrastructure.Data.Entities;
 using MusiCom.Models.User;
 
@@ -134,6 +135,53 @@ namespace MusiCom.Controllers
             await signInManager.SignOutAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details()
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeOrAddPhoto(IFormFile Photo)
+        {
+            if (Photo == null)
+            {
+                return RedirectToAction("Details");
+            }
+
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            //TODO: Find a better solution
+            //ModelState.Remove(nameof(model.TitlePhoto));
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(model);
+            //}
+
+            if (Photo.Length > 0)
+            {
+                using var stream = new MemoryStream();
+                await Photo.CopyToAsync(stream);
+                user.Photo = stream.ToArray();
+            }
+
+            await userManager.UpdateAsync(user);
+
+            return RedirectToAction("Details");
         }
     }
 }
