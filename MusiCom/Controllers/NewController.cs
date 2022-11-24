@@ -104,7 +104,7 @@ namespace MusiCom.Controllers
             {
                 Id = entity.Id,
                 Title = entity.Title,
-                TitlePhoto = entity.TitlePhoto,
+                //TitlePhoto = entity.TitlePhoto,
                 Content = entity.Content,
                 Tags = newService.GetAllTagsForNew(entity.Id),
                 Genre = await genreService.GetGenreByIdAsync(entity.GenreId),

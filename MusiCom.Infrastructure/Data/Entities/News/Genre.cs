@@ -21,6 +21,11 @@ namespace MusiCom.Infrastructure.Data.Entities.News
         /// </summary>
         public ICollection<New> News { get; set; } = new List<New>();
 
+        /// <summary>
+        /// The Events which are from the given Genre
+        /// </summary>
+        public ICollection<Event> Events { get; set; } = new List<Event>();
+
         [Required]
         public DateTime DateOfCreation { get; set; }
 

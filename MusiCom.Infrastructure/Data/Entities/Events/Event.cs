@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MusiCom.Infrastructure.Data.Entities.News;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static MusiCom.Infrastructure.Data.DataConstraints.EventC;
 
@@ -22,6 +23,17 @@ namespace MusiCom.Infrastructure.Data.Entities.Events
         [Required]
         [MaxLength(DescriptionMaxLength)]
         public string Description { get; set; } = null!;
+
+        [ForeignKey(nameof(Image))]
+        public Guid? ImageId { get; set; }
+
+        public Image? Image { get; set; }
+
+        [Required]
+        [ForeignKey(nameof(Genre))]
+        public Guid GenreId { get; set; }
+
+        public Genre Genre { get; set; }
 
         /// <summary>
         /// The Artist who have posted the Event

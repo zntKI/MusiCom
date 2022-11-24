@@ -151,6 +151,11 @@ namespace MusiCom.Controllers
             return View(user);
         }
 
+        /// <summary>
+        /// Changes or Adds Photo to the User Profile
+        /// </summary>
+        /// <param name="Photo">Photo file passed by the View</param>
+        /// <returns>Redirects to User Details page</returns>
         [HttpPost]
         public async Task<IActionResult> ChangeOrAddPhoto(IFormFile Photo)
         {
@@ -185,6 +190,10 @@ namespace MusiCom.Controllers
             return RedirectToAction("Details");
         }
 
+        /// <summary>
+        /// Deletes a Photo from the User profile if it exists
+        /// </summary>
+        /// <returns>Redirects to User Details page</returns>
         public async Task<IActionResult> DeletePhoto()
         {
             var user = await userManager.GetUserAsync(User);

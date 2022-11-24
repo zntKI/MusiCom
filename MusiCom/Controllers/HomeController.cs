@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MusiCom.Core.Contracts;
+using MusiCom.Core.Models.New;
 using MusiCom.Models;
 using System.Diagnostics;
 
@@ -15,12 +16,19 @@ namespace MusiCom.Controllers
         }
 
         /// <summary>
-        /// Presents the last three News
+        /// Presents the all News
         /// </summary>
         /// <returns>A View</returns>
         public IActionResult Index()
         {
-            var news = newService.GetLastThreeNewsAsync();
+            var newsLastThree = newService.GetLastThreeNews();
+            var newsRest = newService.GetRemainingNews();
+
+            NewAllViewModel news = new NewAllViewModel()
+            {
+                LastThreeNews = newsLastThree,
+                RestOfNews = newsRest
+            };
 
             return View(news);
         }

@@ -11,7 +11,9 @@ namespace MusiCom.Core.Contracts
     {
         Task CreateNewAsync(Guid userId, NewAddViewModel model, IFormFile titlePhoto);
 
-        IEnumerable<NewAllViewModel> GetLastThreeNewsAsync();
+        IEnumerable<NewLastThreeViewModel> GetLastThreeNews();
+
+        IEnumerable<NewLastThreeViewModel> GetRemainingNews();
 
         Task<New> GetNewByIdAsync(Guid newId);
 

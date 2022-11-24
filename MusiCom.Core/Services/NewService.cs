@@ -45,11 +45,13 @@ namespace MusiCom.Core.Services
                 IsDeleted = false
             };
 
+            string type = titlePhoto.ContentType;
+
             if (titlePhoto.Length > 0)
             {
                 using var stream = new MemoryStream();
                 await titlePhoto.CopyToAsync(stream);
-                neww.TitlePhoto = stream.ToArray();
+                //neww.TitlePhoto = stream.ToArray();
             }
 
             await repo.AddAsync(neww);
@@ -89,17 +91,17 @@ namespace MusiCom.Core.Services
         /// <summary>
         /// Takes last three News stored in the Database
         /// </summary>
-        /// <returns>Collection of NewAllViewModel</returns>
-        public IEnumerable<NewAllViewModel> GetLastThreeNewsAsync()
+        /// <returns>Collection of NewLastThreeViewModel</returns>
+        public IEnumerable<NewLastThreeViewModel> GetLastThreeNews()
         {
             var news = repo.All<New>()
                 .OrderByDescending(n => n.PostedOn)
                 .Take(3)
-                .Select(n => new NewAllViewModel()
+                .Select(n => new NewLastThreeViewModel()
                 { 
                     Id = n.Id,
                     Title = n.Title,
-                    TitlePhoto = n.TitlePhoto,
+                    //TitlePhoto = n.TitlePhoto,
                 });
 
             return news;
@@ -113,6 +115,25 @@ namespace MusiCom.Core.Services
         public async Task<New> GetNewByIdAsync(Guid newId)
         {
             return await repo.GetByIdAsync<New>(newId);
+        }
+
+        /// <summary>
+        /// Takes Remaining News stored in the Database
+        /// </summary>
+        /// <returns>Collection of NewLastThreeViewModel</returns>
+        public IEnumerable<NewLastThreeViewModel> GetRemainingNews()
+        {
+            var news = repo.All<New>()
+                .OrderByDescending(n => n.PostedOn)
+                .Skip(3)
+                .Select(n => new NewLastThreeViewModel()
+                {
+                    Id = n.Id,
+                    Title = n.Title,
+                    //TitlePhoto = n.TitlePhoto,
+                });
+
+            return news;
         }
     }
 }

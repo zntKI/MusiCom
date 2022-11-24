@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MusiCom.Infrastructure.Data.Entities.News;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static MusiCom.Infrastructure.Data.DataConstraints.EventPostC;
 
@@ -16,7 +17,10 @@ namespace MusiCom.Infrastructure.Data.Entities.Events
         [MaxLength(ContentMaxLength)]
         public string Content { get; set; } = null!;
 
-        public byte[]? Photo { get; set; }
+        [ForeignKey(nameof(Image))]
+        public Guid? ImageId { get; set; }
+
+        public Image? Image { get; set; }
 
         [Required]
         public DateTime DateOfPost { get; init; }

@@ -96,13 +96,13 @@
                 <div class="media g-mb-30 media-comment">
                     @if (comment.User.Photo == null)
                     {
-                        <img class="d-flex g-width-50 g-height-50 rounded-circle g-mt-3 g-mr-15" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Image Description">
+                        <img style="height:50px" class="d-flex g-width-50 g-height-50 rounded-circle g-mt-3 g-mr-15" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Image Description">
                     }
                     else
                     {
                         var base64_u = Convert.ToBase64String(comment.User.Photo);
                         var imageSrc_u = string.Format("data:image/png;base64,{0}", base64_u);
-                        <img class="d-flex g-width-50 g-height-50 rounded-circle g-mt-3 g-mr-15" src="@imageSrc_u" alt="Image Description">
+                        <img style="height:50px" class="d-flex g-width-50 g-height-50 rounded-circle g-mt-3 g-mr-15" src="@imageSrc_u" alt="Image Description">
                     }
                     <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
                         <div class="g-mb-15">

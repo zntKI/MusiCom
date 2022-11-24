@@ -1,12 +1,13 @@
 ﻿@using MusiCom.Core.Models.New;
-@model IEnumerable<NewAllViewModel>
+@model NewAllViewModel
 
 @{
     ViewData["Title"] = "Home Page";
-    var news = Model.ToList();
+    var newsLastThree = Model.LastThreeNews.ToList();
+    var newsRest = Model.RestOfNews.ToList();
 }
 
-@if (!news.Any())
+@if (!newsLastThree.Any())
 {
     <div class="mt-4 p-5 bg-light">
         <h1 class="display-4">Welcome to the best place for renting houses!</h1>
@@ -29,9 +30,9 @@
 
 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
-        @for (int i = 0; i < news.Count(); i++)
+        @for (int i = 0; i < newsLastThree.Count(); i++)
         {
-            var neww = news[i];
+            var neww = newsLastThree[i];
             var base64 = Convert.ToBase64String(neww.TitlePhoto);
             var imageSrc = string.Format("data:image/png;base64,{0}", base64);
             <div class="carousel-item @(i == 0 ? "active" : string.Empty)">
@@ -55,3 +56,19 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
+@if (newsRest.Any())
+{
+    @for (int i = 0; i < newsRest.Count(); i++)
+    {
+        var neww = newsRest[i];
+        var base64 = Convert.ToBase64String(neww.TitlePhoto);
+        var imageSrc = string.Format("data:image/png;base64,{0}", base64);
+        <img class="d-block w-100" style="height:300px; width:300px"
+         src="@imageSrc" alt="@neww.Title">
+            <h5>
+                <a class="btn btn-primary" asp-controller="New" asp-action="Details"
+                asp-route-id="@neww.Id">@neww.Title</a>
+            </h5>
+    }
+}
