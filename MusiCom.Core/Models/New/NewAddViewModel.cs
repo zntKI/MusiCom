@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using MusiCom.Core.Models.CustomAttributes;
 using MusiCom.Core.Models.Genre;
 using System.ComponentModel.DataAnnotations;
 using static MusiCom.Infrastructure.Data.DataConstraints.NewC;
@@ -15,10 +14,7 @@ namespace MusiCom.Core.Models.New
         [StringLength(NewTitleMaxLength, MinimumLength = NewTitleMinLength, ErrorMessage = "The name field must be between {2} and {1} symbols long.")]
         public string Title { get; set; } = null!;
 
-        [Required]
-        //[ValidateImageSize]
-        //[RegularExpression(pattern: "([^\\s]+(\\.(?i)(jpg|jpeg|png))$)", ErrorMessage = "Please insert an image file.")]
-        public byte[] TitlePhoto { get; set; }
+        public byte[] TitleImage { get; set; }
 
         [Required]
         public string Content { get; set; } = null!;

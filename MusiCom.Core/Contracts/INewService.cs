@@ -9,7 +9,7 @@ namespace MusiCom.Core.Contracts
     /// </summary>
     public interface INewServices
     {
-        Task CreateNewAsync(Guid userId, NewAddViewModel model, IFormFile titlePhoto);
+        Task CreateNewAsync(Guid userId, NewAddViewModel model, IFormFile image);
 
         IEnumerable<NewLastThreeViewModel> GetLastThreeNews();
 

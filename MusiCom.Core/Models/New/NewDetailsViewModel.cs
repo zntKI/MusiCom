@@ -13,7 +13,7 @@ namespace MusiCom.Core.Models.New
 
         public string Title { get; set; } = null!;
 
-        public byte[] TitlePhoto { get; set; }
+        public byte[] TitleImage { get; set; }
 
         public string Content { get; set; } = null!;
 

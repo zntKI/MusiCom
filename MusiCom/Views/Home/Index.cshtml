@@ -33,7 +33,7 @@
         @for (int i = 0; i < newsLastThree.Count(); i++)
         {
             var neww = newsLastThree[i];
-            var base64 = Convert.ToBase64String(neww.TitlePhoto);
+            var base64 = Convert.ToBase64String(neww.Image);
             var imageSrc = string.Format("data:image/png;base64,{0}", base64);
             <div class="carousel-item @(i == 0 ? "active" : string.Empty)">
                 <img class="d-block w-100" style="height:500px"
@@ -62,7 +62,7 @@
     @for (int i = 0; i < newsRest.Count(); i++)
     {
         var neww = newsRest[i];
-        var base64 = Convert.ToBase64String(neww.TitlePhoto);
+        var base64 = Convert.ToBase64String(neww.Image);
         var imageSrc = string.Format("data:image/png;base64,{0}", base64);
         <img class="d-block w-100" style="height:300px; width:300px"
          src="@imageSrc" alt="@neww.Title">

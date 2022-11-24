@@ -26,7 +26,7 @@ namespace MusiCom.Core.Services
         /// <param name="userId">EditorId passed by the Controller</param>
         /// <param name="model">ViewModel passed by the Controller</param>
         /// <param name="titlePhoto">The ImageFile passed by the Controller</param>
-        public async Task CreateNewAsync(Guid editorId, NewAddViewModel model, IFormFile titlePhoto)
+        public async Task CreateNewAsync(Guid editorId, NewAddViewModel model, IFormFile image)
         {
             New neww = new New()
             {
@@ -45,13 +45,30 @@ namespace MusiCom.Core.Services
                 IsDeleted = false
             };
 
-            string type = titlePhoto.ContentType;
+            string type = image.ContentType;
 
-            if (titlePhoto.Length > 0)
+            if (!type.Contains("image"))
+            {
+                throw new InvalidOperationException();
+            }
+
+            string contentType = type.Substring(type.IndexOf('/') + 1, type.Length - type.Substring(0, type.IndexOf('/')).Length - 1);
+
+            if (contentType != "png" && contentType != "jpeg" && contentType != "jpg")
+            {
+                throw new InvalidOperationException("Please import an image in one of the formats shown above!");
+            }
+
+            //TODO: Fix
+            if (image.Length > 0)
             {
                 using var stream = new MemoryStream();
-                await titlePhoto.CopyToAsync(stream);
-                //neww.TitlePhoto = stream.ToArray();
+                await image.CopyToAsync(stream);
+                neww.TitleImage = stream.ToArray();
+            }
+            else
+            {
+                throw new InvalidOperationException();
             }
 
             await repo.AddAsync(neww);
@@ -101,7 +118,7 @@ namespace MusiCom.Core.Services
                 { 
                     Id = n.Id,
                     Title = n.Title,
-                    //TitlePhoto = n.TitlePhoto,
+                    Image = n.TitleImage
                 });
 
             return news;
@@ -130,7 +147,7 @@ namespace MusiCom.Core.Services
                 {
                     Id = n.Id,
                     Title = n.Title,
-                    //TitlePhoto = n.TitlePhoto,
+                    Image = n.TitleImage
                 });
 
             return news;

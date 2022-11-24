@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 using static MusiCom.Infrastructure.Data.DataConstraints.UserC;
 
 namespace MusiCom.Infrastructure.Data.Entities
@@ -20,6 +16,6 @@ namespace MusiCom.Infrastructure.Data.Entities
         [MaxLength(LastNameMaxLength)]
         public string? LastName { get; set; }
 
-        public byte[]? Photo { get; set; }
+        public byte[]? Image { get; set; }
     }
 }

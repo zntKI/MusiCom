@@ -11,7 +11,7 @@
 <div class="container" style="display:inline">
     <div class="row">
         <div class="col-4">
-            @{var base64 = Convert.ToBase64String(Model.TitlePhoto);
+            @{var base64 = Convert.ToBase64String(Model.TitleImage);
             var imageSrc = string.Format("data:image/png;base64,{0}", base64);}
             <img class="card-img-top" style="width: 20rem;"
                  src="@imageSrc" alt="House Image">
@@ -27,30 +27,6 @@
                     <b>@tag.Name </b>
                 }
             </p>
-            @*<p><i>(@(Model.IsRented ? "Rented" : "Not Rented"))</i></p>
-            <div class="form-inline">
-                @if (this.User.Identity.IsAuthenticated)
-                {
-                    <a class="btn btn-warning" asp-controller="Houses" asp-action="Edit"
-                   asp-route-id="@Model.Id">Edit</a>
-                    <a class="ml-2 btn btn-danger" asp-controller="Houses" asp-action="Delete"
-                   asp-route-id="@Model.Id">Delete</a>
-                    @if (!Model.IsRented)
-                    {
-                        <form class="ml-2" asp-controller="Houses"
-                      asp-action="Rent" asp-route-id="@Model.Id" method="post">
-                            <input class="btn btn-primary" type="submit" value="Rent" />
-                        </form>
-                    }
-                    else
-                    {
-                        <form class="ml-2" asp-controller="Houses" asp-action="Leave"
-                      asp-route-id="@Model.Id" method="post">
-                            <input class="btn btn-primary" type="submit" value="Leave" />
-                        </form>
-                    }
-                }
-            </div>*@
             <p></p>
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
@@ -94,37 +70,37 @@
         {
             <div class="col-md-8">
                 <div class="media g-mb-30 media-comment">
-                    @if (comment.User.Photo == null)
+                    @if (comment.User.Image == null)
                     {
                         <img style="height:50px" class="d-flex g-width-50 g-height-50 rounded-circle g-mt-3 g-mr-15" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Image Description">
                     }
                     else
                     {
-                        var base64_u = Convert.ToBase64String(comment.User.Photo);
+                        var base64_u = Convert.ToBase64String(comment.User.Image);
                         var imageSrc_u = string.Format("data:image/png;base64,{0}", base64_u);
                         <img style="height:50px" class="d-flex g-width-50 g-height-50 rounded-circle g-mt-3 g-mr-15" src="@imageSrc_u" alt="Image Description">
                     }
                     <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
                         <div class="g-mb-15">
-                            <h5 class="h5 g-color-gray-dark-v1 mb-0">@comment.User.FirstName @comment.User.LastName</h5>
-                            <span class="g-color-gray-dark-v4 g-font-size-12">@comment.DateOfPost</span>
+                            <h5 class="h5 g-color-gray-dark-v1 mb-0">@comment?.User?.FirstName @comment?.User?.LastName</h5>
+                            <span class="g-color-gray-dark-v4 g-font-size-12">@comment?.DateOfPost</span>
                         </div>
 
                         <p>
-                            @comment.Content
+                            @comment?.Content
                         </p>
 
                         <ul class="list-inline d-sm-flex my-0">
                             <li class="list-inline-item g-mr-20">
-                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="#!">
+                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Comment" asp-action="AddLike" asp-route-cId="@comment?.Id" asp-route-mId="@Model.Id">
                                     <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>
-                                    @comment.NumberOfLikes
+                                    @comment?.NumberOfLikes
                                 </a>
                             </li>
                             <li class="list-inline-item g-mr-20">
-                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="#!">
+                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Comment" asp-action="AddDislike" asp-route-cId="@comment?.Id" asp-route-mId="@Model.Id">
                                     <i class="fa fa-thumbs-down g-pos-rel g-top-1 g-mr-3"></i>
-                                    @comment.NumberOfDislikes
+                                    @comment?.NumberOfDislikes
                                 </a>
                             </li>
                             @*<li class="list-inline-item ml-auto">

@@ -29,21 +29,6 @@ namespace MusiCom.Infrastructure.Data
                 .WithMany(n => n.NewComments)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder.Entity<Image>()
-                .HasOne(i => i.New)
-                .WithOne(n => n.Image)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder.Entity<Image>()
-                .HasOne(i => i.EventPost)
-                .WithOne(ep => ep.Image)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder.Entity<Image>()
-                .HasOne(i => i.Event)
-                .WithOne(e => e.Image)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
             base.OnModelCreating(builder);
         }
 
@@ -60,7 +45,5 @@ namespace MusiCom.Infrastructure.Data
         public DbSet<Event> Events { get; set; }
 
         public DbSet<EventPost> EventPosts { get; set; }
-
-        public DbSet<Image> Images { get; set; }
     }
 }

@@ -64,7 +64,7 @@ namespace MusiCom.Controllers
         /// <param name="TitlePhoto">The TitlePhotoFile passed by the View</param>
         /// <returns>Redirects to Action "Index" in HomeController</returns>
         [HttpPost]
-        public async Task<IActionResult> Add(NewAddViewModel model, IFormFile TitlePhoto)
+        public async Task<IActionResult> Add(NewAddViewModel model, IFormFile image)
         {
             var editor = await userManager.GetUserAsync(User);
 
@@ -74,13 +74,22 @@ namespace MusiCom.Controllers
             }
 
             //TODO: Find a better solution
-            ModelState.Remove(nameof(model.TitlePhoto));
+            ModelState.Remove(nameof(model.TitleImage));
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            await newService.CreateNewAsync(editor.Id, model, TitlePhoto);
+            //TODO: Fix
+            try
+            {
+                await newService.CreateNewAsync(editor.Id, model, image);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
 
             return RedirectToAction("Index", "Home");
         }
@@ -104,7 +113,7 @@ namespace MusiCom.Controllers
             {
                 Id = entity.Id,
                 Title = entity.Title,
-                //TitlePhoto = entity.TitlePhoto,
+                TitleImage = entity.TitleImage,
                 Content = entity.Content,
                 Tags = newService.GetAllTagsForNew(entity.Id),
                 Genre = await genreService.GetGenreByIdAsync(entity.GenreId),

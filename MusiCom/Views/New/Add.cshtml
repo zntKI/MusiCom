@@ -18,9 +18,9 @@
                     <span asp-validation-for="@Model.Title" class="text-danger"></span>
                 </div>
                 <div class="text-center mb-3">
-                    <label asp-for="@Model.TitlePhoto" class="form-label">Title Photo</label>
-                    <input type="file" id="files" asp-for="@Model.TitlePhoto" />
-                    <span asp-validation-for="@Model.TitlePhoto" class="text-danger"></span>
+                    <label asp-for="@Model.TitleImage" class="form-label">Title Photo</label>
+                    <input type="file" id="files" asp-for="@Model.TitleImage" name="image"/>
+                    <span asp-validation-for="@Model.TitleImage" class="text-danger"></span>
                 </div>
                 <div class="text-center mb-3">
                     <label asp-for="@Model.Content" class="form-label">New Content</label>

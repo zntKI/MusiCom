@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MusiCom.Core.Contracts;
 using MusiCom.Core.Services;
 using MusiCom.Infrastructure.Data.Entities;
 using MusiCom.Models.User;
@@ -157,9 +158,9 @@ namespace MusiCom.Controllers
         /// <param name="Photo">Photo file passed by the View</param>
         /// <returns>Redirects to User Details page</returns>
         [HttpPost]
-        public async Task<IActionResult> ChangeOrAddPhoto(IFormFile Photo)
+        public async Task<IActionResult> ChangeOrAddPhoto(IFormFile image)
         {
-            if (Photo == null)
+            if (image == null)
             {
                 return RedirectToAction("Details");
             }
@@ -171,18 +172,30 @@ namespace MusiCom.Controllers
                 return BadRequest();
             }
 
-            //TODO: Find a better solution
-            //ModelState.Remove(nameof(model.TitlePhoto));
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(model);
-            //}
+            string type = image.ContentType;
 
-            if (Photo.Length > 0)
+            if (!type.Contains("image"))
+            {
+                throw new InvalidOperationException();
+            }
+
+            string contentType = type.Substring(type.IndexOf('/') + 1, type.Length - type.Substring(0, type.IndexOf('/')).Length - 1);
+
+            if (contentType != "png" && contentType != "jpeg" && contentType != "jpg")
+            {
+                throw new InvalidOperationException("Please import an image in one of the formats shown above!");
+            }
+
+            //TODO: Fix
+            if (image.Length > 0)
             {
                 using var stream = new MemoryStream();
-                await Photo.CopyToAsync(stream);
-                user.Photo = stream.ToArray();
+                await image.CopyToAsync(stream);
+                user.Image = stream.ToArray();
+            }
+            else
+            {
+                throw new InvalidOperationException();
             }
 
             await userManager.UpdateAsync(user);
@@ -203,12 +216,7 @@ namespace MusiCom.Controllers
                 return BadRequest();
             }
 
-            if (user.Photo == null)
-            {
-                return RedirectToAction("Details");
-            }
-
-            user.Photo = null;
+            user.Image = null;
 
             await userManager.UpdateAsync(user);
 

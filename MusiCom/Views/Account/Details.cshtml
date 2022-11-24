@@ -12,23 +12,23 @@
     <div class="row">
         <div class="col-4">
             <form asp-controller="Account" asp-action="ChangeOrAddPhoto" method="post" enctype="multipart/form-data">
-                @if (Model.Photo == null)
+                @if (Model.Image == null)
                 {
                     <img class="card-img-top rounded-circle" style="width: 20rem;"
                      src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="User Image">
-                     <label asp-for="@Model.Photo" class="form-label">Add Photo</label>
-                     <input type="file" id="files" asp-for="@Model.Photo" />
+                     <label asp-for="@Model.Image" class="form-label">Add Photo</label>
+                    <input type="file" id="files" asp-for="@Model.Image" name="image" />
                      //<span asp-validation-for="@Model.Photo" class="text-danger"></span>
                     <button id="changeoraddphoto-submit" type="submit" class="btn btn-primary">Send</button>
                 }
                 else
                 {
-                    var base64 = Convert.ToBase64String(Model.Photo);
+                    var base64 = Convert.ToBase64String(Model.Image);
                     var imageSrc = string.Format("data:image/png;base64,{0}", base64);
                     <img class="card-img-top rounded-circle" style="width: 20rem;"
                         src="@imageSrc" alt="House Image">
-                    <label asp-for="@Model.Photo" class="form-label">Change Photo</label>
-                    <input type="file" id="files" asp-for="@Model.Photo" />
+                    <label asp-for="@Model.Image" class="form-label">Change Photo</label>
+                    <input type="file" id="files" asp-for="@Model.Image" name="image" />
                     //<span asp-validation-for="@Model.Photo" class="text-danger"></span>
                     <button id="changeoraddphoto-submit" type="submit" class="btn btn-primary">Send</button>
                     <a class="btn btn-danger asp-controller="Account" asp-action="DeletePhoto">Delete</a>

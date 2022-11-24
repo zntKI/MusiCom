@@ -181,6 +181,9 @@ namespace MusiCom.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -207,9 +210,6 @@ namespace MusiCom.Infrastructure.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<byte[]>("Photo")
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -257,8 +257,9 @@ namespace MusiCom.Infrastructure.Migrations
                     b.Property<Guid>("GenreId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ImageId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -273,10 +274,6 @@ namespace MusiCom.Infrastructure.Migrations
                     b.HasIndex("ArtistId");
 
                     b.HasIndex("GenreId");
-
-                    b.HasIndex("ImageId")
-                        .IsUnique()
-                        .HasFilter("[ImageId] IS NOT NULL");
 
                     b.ToTable("Events");
                 });
@@ -301,8 +298,8 @@ namespace MusiCom.Infrastructure.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ImageId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -313,10 +310,6 @@ namespace MusiCom.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("ImageId")
-                        .IsUnique()
-                        .HasFilter("[ImageId] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -345,31 +338,6 @@ namespace MusiCom.Infrastructure.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("MusiCom.Infrastructure.Data.Entities.News.Image", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateOfCreation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<byte[]>("Photo")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
-                });
-
             modelBuilder.Entity("MusiCom.Infrastructure.Data.Entities.News.New", b =>
                 {
                     b.Property<Guid>("Id")
@@ -386,9 +354,6 @@ namespace MusiCom.Infrastructure.Migrations
                     b.Property<Guid>("GenreId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ImageId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -400,14 +365,15 @@ namespace MusiCom.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<byte[]>("TitleImage")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EditorId");
 
                     b.HasIndex("GenreId");
-
-                    b.HasIndex("ImageId")
-                        .IsUnique();
 
                     b.ToTable("News");
                 });
@@ -561,15 +527,9 @@ namespace MusiCom.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MusiCom.Infrastructure.Data.Entities.News.Image", "Image")
-                        .WithOne("Event")
-                        .HasForeignKey("MusiCom.Infrastructure.Data.Entities.Events.Event", "ImageId");
-
                     b.Navigation("Artist");
 
                     b.Navigation("Genre");
-
-                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("MusiCom.Infrastructure.Data.Entities.Events.EventPost", b =>
@@ -579,10 +539,6 @@ namespace MusiCom.Infrastructure.Migrations
                         .HasForeignKey("EventId")
                         .IsRequired();
 
-                    b.HasOne("MusiCom.Infrastructure.Data.Entities.News.Image", "Image")
-                        .WithOne("EventPost")
-                        .HasForeignKey("MusiCom.Infrastructure.Data.Entities.Events.EventPost", "ImageId");
-
                     b.HasOne("MusiCom.Infrastructure.Data.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -590,8 +546,6 @@ namespace MusiCom.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Event");
-
-                    b.Navigation("Image");
 
                     b.Navigation("User");
                 });
@@ -610,16 +564,9 @@ namespace MusiCom.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MusiCom.Infrastructure.Data.Entities.News.Image", "Image")
-                        .WithOne("New")
-                        .HasForeignKey("MusiCom.Infrastructure.Data.Entities.News.New", "ImageId")
-                        .IsRequired();
-
                     b.Navigation("Editor");
 
                     b.Navigation("Genre");
-
-                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("MusiCom.Infrastructure.Data.Entities.News.NewComment", b =>
@@ -669,15 +616,6 @@ namespace MusiCom.Infrastructure.Migrations
                     b.Navigation("Events");
 
                     b.Navigation("News");
-                });
-
-            modelBuilder.Entity("MusiCom.Infrastructure.Data.Entities.News.Image", b =>
-                {
-                    b.Navigation("Event");
-
-                    b.Navigation("EventPost");
-
-                    b.Navigation("New");
                 });
 
             modelBuilder.Entity("MusiCom.Infrastructure.Data.Entities.News.New", b =>

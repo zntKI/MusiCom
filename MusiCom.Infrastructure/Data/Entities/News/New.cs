@@ -17,10 +17,7 @@ namespace MusiCom.Infrastructure.Data.Entities.News
         public string Title { get; set; } = null!;
 
         [Required]
-        [ForeignKey(nameof(Image))]
-        public Guid ImageId { get; set; }
-
-        public Image Image { get; set; }
+        public byte[] TitleImage { get; set; } = null!;
 
         [Required]
         public DateTime PostedOn { get; init; }

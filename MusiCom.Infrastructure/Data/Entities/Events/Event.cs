@@ -24,16 +24,15 @@ namespace MusiCom.Infrastructure.Data.Entities.Events
         [MaxLength(DescriptionMaxLength)]
         public string Description { get; set; } = null!;
 
-        [ForeignKey(nameof(Image))]
-        public Guid? ImageId { get; set; }
-
-        public Image? Image { get; set; }
+        [Required]
+        public byte[] Image { get; set; } = null!;
 
         [Required]
         [ForeignKey(nameof(Genre))]
         public Guid GenreId { get; set; }
 
-        public Genre Genre { get; set; }
+        [Required]
+        public Genre Genre { get; set; } = null!;
 
         /// <summary>
         /// The Artist who have posted the Event

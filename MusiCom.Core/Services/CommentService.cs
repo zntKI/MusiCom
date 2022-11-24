@@ -19,6 +19,44 @@ namespace MusiCom.Core.Services
         }
 
         /// <summary>
+        /// Adds Dislike to Comment
+        /// </summary>
+        /// <param name="commentId">Comment Id</param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task AddDislikeToComment(Guid commentId)
+        {
+            var comment = await repo.GetByIdAsync<NewComment>(commentId);
+
+            if (comment == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            comment.NumberOfDislikes++;
+
+            await repo.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Adds Like to Comment
+        /// </summary>
+        /// <param name="commentId">Comment Id</param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task AddLikeToComment(Guid commentId)
+        {
+            var comment = await repo.GetByIdAsync<NewComment>(commentId);
+
+            if (comment == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            comment.NumberOfLikes++;
+
+            await repo.SaveChangesAsync();
+        }
+
+        /// <summary>
         /// Creates a Comment atached to a given New
         /// </summary>
         /// <param name="model">ViewModel containing data for the Comment's Content</param>
