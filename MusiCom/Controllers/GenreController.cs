@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.Genre;
 using MusiCom.Infrastructure.Data.Entities.News;
@@ -8,6 +9,7 @@ namespace MusiCom.Controllers
     /// <summary>
     /// Contains functionalities regarding the genres
     /// </summary>
+    [Authorize]
     public class GenreController : Controller
     {
         private readonly IGenreService genreService;

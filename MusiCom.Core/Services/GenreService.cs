@@ -1,4 +1,5 @@
-﻿using MusiCom.Core.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.Genre;
 using MusiCom.Infrastructure.Data.Common;
 using MusiCom.Infrastructure.Data.Entities.News;
@@ -59,6 +60,18 @@ namespace MusiCom.Core.Services
             genre.DateOfCreation = DateTime.Now;
 
             await repo.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Gets All Genres' Names
+        /// </summary>
+        /// <returns>A Collection of Genre Names</returns>
+        public async Task<IEnumerable<string>> GetAllGenreNames()
+        {
+            return await repo.AllReadonly<Genre>()
+                .Where(g => g.IsDeleted == false)
+                .Select(g => g.Name)
+                .ToListAsync();
         }
 
         /// <summary>

@@ -12,6 +12,8 @@ namespace MusiCom.Core.Contracts
 
         IEnumerable<GenreAllViewModel> GetAllGenres();
 
+        Task<IEnumerable<string>> GetAllGenreNames();
+
         Task<Genre> GetGenreByIdAsync(Guid Id);
 
         Task EditGenreAsync(Guid id, GenreAllViewModel model);
