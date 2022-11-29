@@ -42,7 +42,7 @@
 <p></p>
 
 <p>
-    <form asp-controller="Comment" asp-action="Create" method="post" asp-route-id="@Model.Id">
+    <form asp-controller="Post" asp-action="Create" method="post" asp-route-id="@Model.Id" enctype="multipart/form-data">
         <div class="form-group card-header row">
             <h5>Send a new post</h5>
         </div>
@@ -56,6 +56,7 @@
         <div class="col-4">
             User Name: @User?.Identity?.Name<br />
             <input class="btn btn-primary mt-2 float-lg-right" type="submit" value="Send" />
+            @*<button id="add-submit" type="submit" class="btn btn-primary">Send</button>*@
         </div>
     </form>
 </p>
@@ -83,21 +84,25 @@
                             <span class="g-color-gray-dark-v4 g-font-size-12">@post?.DateOfPost</span>
                         </div>
 
-                        <p>
-                            @post?.Content
-                        </p>
+                        
+                        @post?.Content
 
-                        <img src="@post?.Image">
+                        @if (post?.Image != null)
+                        {
+                            var base64_u = Convert.ToBase64String(post.Image);
+                            var imageSrc_u = string.Format("data:image/png;base64,{0}", base64_u);
+                            <img src="@imageSrc_u" />
+                        }
 
                         <ul class="list-inline d-sm-flex my-0">
                             <li class="list-inline-item g-mr-20">
-                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Post" asp-action="AddLike" asp-route-cId="@post?.Id" asp-route-mId="@Model.Id">
+                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Post" asp-action="AddLike" asp-route-pId="@post?.Id" asp-route-mId="@Model.Id">
                                     <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>
                                     @post?.NumberOfLikes
                                 </a>
                             </li>
                             <li class="list-inline-item g-mr-20">
-                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Post" asp-action="AddDislike" asp-route-cId="@post?.Id" asp-route-mId="@Model.Id">
+                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Post" asp-action="AddDislike" asp-route-pId="@post?.Id" asp-route-mId="@Model.Id">
                                     <i class="fa fa-thumbs-down g-pos-rel g-top-1 g-mr-3"></i>
                                     @post?.NumberOfDislikes
                                 </a>

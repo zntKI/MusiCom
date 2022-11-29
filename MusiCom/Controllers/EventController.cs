@@ -96,11 +96,16 @@ namespace MusiCom.Controllers
             return RedirectToAction("All", "Event");
         }
 
+        /// <summary>
+        /// Renders the Details Page for an Event
+        /// </summary>
+        /// <param name="Id">Id of the Given Event</param>
+        /// <returns>A View</returns>
         [HttpGet]
         public async Task<IActionResult> Details(Guid Id)
         {
             var eventt = await eventService.GetEventById(Id);
-            
+
             return View(eventt);
         }
     }

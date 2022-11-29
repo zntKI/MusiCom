@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MusiCom.Core.Models.Event;
 using MusiCom.Infrastructure.Data.Entities;
+using MusiCom.Infrastructure.Data.Entities.Events;
 
 namespace MusiCom.Core.Contracts
 {
@@ -15,5 +16,7 @@ namespace MusiCom.Core.Contracts
             int eventsPerPage = 1);
 
         Task<EventDetailsViewModel> GetEventById(Guid id);
+
+        Task<IEnumerable<EventPost>> GetAllPostsForEvent(Guid id);
     }
 }

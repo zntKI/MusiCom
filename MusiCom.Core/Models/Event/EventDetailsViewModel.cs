@@ -3,6 +3,9 @@ using MusiCom.Infrastructure.Data.Entities.Events;
 
 namespace MusiCom.Core.Models.Event
 {
+    /// <summary>
+    /// Contains data which will be displayed when Details Page is opened
+    /// </summary>
     public class EventDetailsViewModel
     {
         public Guid Id { get; set; }

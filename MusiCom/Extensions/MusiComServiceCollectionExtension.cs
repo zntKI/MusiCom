@@ -22,6 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<INewServices, NewService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IPostService, PostService>();
 
             return services;
         }

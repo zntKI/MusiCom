@@ -122,6 +122,22 @@ namespace MusiCom.Core.Services
             };
         }
 
+        /// <summary>
+        /// Gets all Posts attached to a Given Event
+        /// </summary>
+        /// <param name="id">Id of the Event</param>
+        /// <returns>Collection of Posts</returns>
+        public async Task<IEnumerable<EventPost>> GetAllPostsForEvent(Guid id)
+        {
+            return await repo.All<EventPost>(ep => ep.EventId == id)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the wanted Event
+        /// </summary>
+        /// <param name="id">Event Id</param>
+        /// <returns>EvemtDetailsViewModel</returns>
         public async Task<EventDetailsViewModel> GetEventById(Guid id)
         {
             //TODO: Fix
@@ -131,13 +147,14 @@ namespace MusiCom.Core.Services
 
             EventDetailsViewModel model = new EventDetailsViewModel()
             {
+                Id = id,
                 Image = entity.Image,
                 Title = entity.Title,
                 Description = entity.Description,
                 Date = entity.Date,
                 ArtistName = artist.UserName,
                 Genre = genre,
-                EventPosts = entity.EventPosts,
+                EventPosts = await GetAllPostsForEvent(entity.Id),
             };
 
             return model;

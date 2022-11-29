@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MusiCom.Core.Models.Post
+﻿namespace MusiCom.Core.Models.Post
 {
+    /// <summary>
+    /// Contains data for adding a Post
+    /// </summary>
     public class PostAddViewModel
     {
         public string Content { get; set; } = null!;

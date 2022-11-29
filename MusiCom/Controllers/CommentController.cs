@@ -39,7 +39,15 @@ namespace MusiCom.Controllers
                 return BadRequest();
             }
 
-            await commentService.CreateCommentAsync(model.CurrentComment, Id, editor.Id);
+            try
+            {
+                await commentService.CreateCommentAsync(model.CurrentComment, Id, editor.Id);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
 
             return RedirectToAction("Details", "New", new { id = Id });
         }
