@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.Event;
+using MusiCom.Infrastructure.Data.Entities;
 using System.Security.Claims;
 
 namespace MusiCom.Controllers
@@ -9,13 +11,16 @@ namespace MusiCom.Controllers
     [Authorize]
     public class EventController : Controller
     {
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly IEventService eventService;
         private readonly IGenreService genreService;
 
-        public EventController(IEventService _eventService, IGenreService _genreService)
+        public EventController(IEventService _eventService, IGenreService _genreService,
+                                UserManager<ApplicationUser> _userManager)
         {
             eventService = _eventService;
             genreService = _genreService;
+            userManager = _userManager;
         }
 
         /// <summary>
@@ -65,7 +70,7 @@ namespace MusiCom.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(EventAddViewModel model, IFormFile image)
         {
-            var artistId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var artist = await userManager.GetUserAsync(User);
 
             //if (!User.IsInRole("Artist"))
             //{
@@ -80,7 +85,7 @@ namespace MusiCom.Controllers
 
             try
             {
-                await eventService.CreateEventAsync(model, Guid.Parse(artistId), image);
+                await eventService.CreateEventAsync(model, artist, image);
             }
             catch (Exception)
             {
@@ -89,6 +94,14 @@ namespace MusiCom.Controllers
             }
 
             return RedirectToAction("All", "Event");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(Guid Id)
+        {
+            var eventt = await eventService.GetEventById(Id);
+            
+            return View(eventt);
         }
     }
 }

@@ -5,6 +5,7 @@ using MusiCom.Infrastructure.Data.Entities.Events;
 using Microsoft.AspNetCore.Http;
 using MusiCom.Infrastructure.Data.Common;
 using Microsoft.EntityFrameworkCore;
+using MusiCom.Infrastructure.Data.Entities;
 
 namespace MusiCom.Core.Services
 {
@@ -24,14 +25,15 @@ namespace MusiCom.Core.Services
         /// <param name="artistId">Artist who have created the Event</param>
         /// <param name="image">Image File passed by the View</param>
         /// <exception cref="InvalidOperationException">Throws if something goes wrong</exception>
-        public async Task CreateEventAsync(EventAddViewModel model, Guid artistId, IFormFile image)
+        public async Task CreateEventAsync(EventAddViewModel model, ApplicationUser artist, IFormFile image)
         {
             Event eventt = new Event()
             {
                 Title = model.Title,
                 Description = model.Description,
                 GenreId = model.GenreId,
-                ArtistId = artistId,
+                ArtistId = artist.Id,
+                Artist = artist,
                 Date = model.Date,
                 IsDeleted = false,
                 DateOfCreation = DateTime.Now
@@ -106,7 +108,7 @@ namespace MusiCom.Core.Services
                     Image = e.Image,
                     Date = e.Date,
                     Description = e.Description,
-                    ArtistName = $"{e.Artist.FirstName} {e.Artist.LastName}",
+                    ArtistName = e.Artist.UserName,
                 })
                 .OrderBy(e => e.Date)
                 .ToListAsync();
@@ -118,6 +120,27 @@ namespace MusiCom.Core.Services
                 TotalEventsCount = totalEvents,
                 Events = events
             };
+        }
+
+        public async Task<EventDetailsViewModel> GetEventById(Guid id)
+        {
+            //TODO: Fix
+            var entity = await repo.GetByIdAsync<Event>(id);
+            var genre = await repo.GetByIdAsync<Genre>(entity.GenreId);
+            var artist = await repo.GetByIdAsync<ApplicationUser>(entity.ArtistId);
+
+            EventDetailsViewModel model = new EventDetailsViewModel()
+            {
+                Image = entity.Image,
+                Title = entity.Title,
+                Description = entity.Description,
+                Date = entity.Date,
+                ArtistName = artist.UserName,
+                Genre = genre,
+                EventPosts = entity.EventPosts,
+            };
+
+            return model;
         }
     }
 }

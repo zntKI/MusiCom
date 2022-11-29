@@ -19,6 +19,12 @@ namespace MusiCom.Infrastructure.Data.Entities.Events
         public byte[]? Image { get; set; }
 
         [Required]
+        public int NumberOfLikes { get; set; }
+
+        [Required]
+        public int NumberOfDislikes { get; set; }
+
+        [Required]
         public DateTime DateOfPost { get; init; }
 
         public DateTime? DateOfChange { get; set; }
