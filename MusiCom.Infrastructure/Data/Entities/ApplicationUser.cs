@@ -17,5 +17,20 @@ namespace MusiCom.Infrastructure.Data.Entities
         public string? LastName { get; set; }
 
         public byte[]? Image { get; set; }
+
+        [ForeignKey(nameof(Editor))]
+        public Guid? EditorId { get; set; }
+
+        public Editor? Editor { get; set; }
+
+        [ForeignKey(nameof(Artist))]
+        public Guid? ArtistId { get; set; }
+
+        public Artist? Artist { get; set; }
+
+        public DateTime? DateOfCreation { get; set; }
+
+        [Required]
+        public bool IsDeleted { get; set; }
     }
 }

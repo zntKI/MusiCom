@@ -45,5 +45,9 @@ namespace MusiCom.Infrastructure.Data
         public DbSet<Event> Events { get; set; }
 
         public DbSet<EventPost> EventPosts { get; set; }
+
+        public DbSet<Editor> Editors { get; set; }
+
+        public DbSet<Artist> Artists { get; set; }
     }
 }
