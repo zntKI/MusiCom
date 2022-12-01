@@ -3,6 +3,7 @@ using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.New;
 using MusiCom.Models;
 using System.Diagnostics;
+using static MusiCom.Areas.Admin.AdminConstants;
 
 namespace MusiCom.Controllers
 {
@@ -21,6 +22,11 @@ namespace MusiCom.Controllers
         /// <returns>A View</returns>
         public IActionResult Index()
         {
+            if (User.IsInRole(AdminRoleName))
+            {
+                return RedirectToAction("Index", "Home", new { area = "Admin" });
+            }
+
             var newsLastThree = newService.GetLastThreeNews();
             var newsRest = newService.GetRemainingNews();
 
