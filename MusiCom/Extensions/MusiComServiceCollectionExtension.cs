@@ -1,5 +1,7 @@
 ﻿using MusiCom.Core.Contracts;
+using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Services;
+using MusiCom.Core.Services.Admin;
 using MusiCom.Infrastructure.Data.Common;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -23,6 +25,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IPostService, PostService>();
+
+            //Admin
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }

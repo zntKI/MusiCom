@@ -1,0 +1,40 @@
+﻿@using MusiCom.Core.Models.Admin.User;
+@model IEnumerable<UserServiceModel>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th><label>UserName</label></th>
+            <th><label>Email</label></th>
+            <th><label>Options</label></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td><label>@user.UserName</label></td>
+                <td><label>@user.Email</label></td>
+                <td>
+                    @if (user.EditorId == null)
+                    {
+                        <a asp-area="Admin" asp-controller="User" asp-action="MakeEditor" class="btn btn-primary btn-lg">Make Editor</a>
+                    }
+                    else
+                    {
+                        <a asp-area="Admin" asp-controller="User" asp-action="RemoveEditor" class="btn btn-primary btn-lg">Remove Editor</a>
+                    }
+                    @if (user.ArtistId == null)
+                    {
+                        <a asp-area="Admin" asp-controller="User" asp-action="MakeArtist" class="btn btn-primary btn-lg">Make Artist</a>
+                    }
+                    else
+                    {
+                        <a asp-area="Admin" asp-controller="User" asp-action="RemoveArtist" class="btn btn-primary btn-lg">Make Artist</a>
+                    }
+                    <a asp-area="Admin" asp-controller="User" asp-action="DeleteUser" class="btn btn-primary btn-lg">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
