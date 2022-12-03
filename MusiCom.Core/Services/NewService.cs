@@ -83,6 +83,7 @@ namespace MusiCom.Core.Services
         public ICollection<NewComment> GetAllCommentsForNew(Guid newId)
         {
             return repo.All<NewComment>()
+                    .Include(n => n.User)
                     .Where(n => n.NewId == newId)
                     .OrderByDescending(n => n.DateOfPost)
                     .ToList();
