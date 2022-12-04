@@ -6,6 +6,7 @@ using MusiCom.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MusiCom.Infrastructure.Data.Entities.News;
 using MusiCom.Core.Models.Comment;
+using MusiCom.Core.Contracts.Admin;
 
 namespace MusiCom.Controllers
 {
@@ -28,9 +29,18 @@ namespace MusiCom.Controllers
             userManager = _userManager;
         }
 
-        public IActionResult Index()
+        public IActionResult All()
         {
-            return View();
+            var newsLastThree = newService.GetLastThreeNews();
+            var newsRest = newService.GetRemainingNews();
+
+            NewAllViewModel news = new NewAllViewModel()
+            {
+                LastThreeNews = newsLastThree,
+                RestOfNews = newsRest
+            };
+
+            return View(news);
         }
 
         /// <summary>
@@ -38,9 +48,9 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <returns>A View with the Model</returns>
         [HttpGet]
-        public IActionResult Add()
+        public async Task<IActionResult> Add()
         {
-            var tags = tagService.GetAllTags();
+            var tags = await tagService.GetAllTags();
             var selectList = new List<SelectListItem>();
             foreach (var tag in tags)
             {

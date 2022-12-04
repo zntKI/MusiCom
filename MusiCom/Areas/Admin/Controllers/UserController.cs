@@ -36,10 +36,10 @@ namespace MusiCom.Areas.Admin.Controllers
 
             var types = new List<string>()
             {
-                "UsersOnly",
+                "UserOnly",
                 "Editor",
                 "Artist",
-                "Editors and Artists"
+                "Editor and Artist"
             };
             query.Types = types;
 
@@ -227,7 +227,35 @@ namespace MusiCom.Areas.Admin.Controllers
 
             try
             {
-                await userService.DeleteUser(user);
+                await userService.DeleteUserAsync(user);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return RedirectToAction("All", "User");
+        }
+
+        /// <summary>
+        /// Finds the User by the given Id and then calls a method from the Service to Bring User Back and Mark it as NotDeleted
+        /// </summary>
+        /// <param name="Id">Id of the User</param>
+        /// <returns>Redirects to Action All</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task<IActionResult> BringBackUser(Guid Id)
+        {
+            var user = await userManager.FindByIdAsync(Id.ToString());
+
+            if (user == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            try
+            {
+                await userService.BringBackUserAsync(user);
             }
             catch (Exception)
             {

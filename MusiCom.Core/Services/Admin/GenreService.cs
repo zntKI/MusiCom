@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MusiCom.Core.Contracts;
+using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Genre;
 using MusiCom.Infrastructure.Data.Common;
 using MusiCom.Infrastructure.Data.Entities.News;
 
-namespace MusiCom.Core.Services
+namespace MusiCom.Core.Services.Admin
 {
     /// <summary>
     /// Contains the logic for Genre functionalities
@@ -84,7 +84,7 @@ namespace MusiCom.Core.Services
             var models = repo.All<Genre>()
                 .Where(g => g.IsDeleted == false)
                 .Select(g => new GenreAllViewModel()
-                { 
+                {
                     Id = g.Id,
                     Name = g.Name,
                     DateOfCreation = g.DateOfCreation

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MusiCom.Core.Contracts;
+using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Event;
 using MusiCom.Infrastructure.Data.Entities;
 using System.Security.Claims;

@@ -11,7 +11,7 @@ namespace MusiCom.Core.Contracts
     {
         Task CreateTagAsync(TagViewModel model);
 
-        IEnumerable<TagNewAllViewModel> GetAllTags();
+        Task<IEnumerable<TagNewAllViewModel>> GetAllTags();
 
         Task<Tag> GetTagByIdAsync(Guid Id);
 

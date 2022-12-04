@@ -1,7 +1,7 @@
 ﻿using MusiCom.Core.Models.Genre;
 using MusiCom.Infrastructure.Data.Entities.News;
 
-namespace MusiCom.Core.Contracts
+namespace MusiCom.Core.Contracts.Admin
 {
     /// <summary>
     /// Interface for GenreService

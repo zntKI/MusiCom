@@ -113,6 +113,12 @@ namespace MusiCom.Controllers
 
             var user = await userManager.FindByNameAsync(model.UserName);
 
+            if (user.IsDeleted) 
+            {
+                ModelState.AddModelError("", "Such account no longer exists.");
+                return View(model);
+            }
+
             if (user != null)
             {
                 var result = await signInManager.PasswordSignInAsync(user, model.Password, false, false);

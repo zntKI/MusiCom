@@ -27,16 +27,7 @@ namespace MusiCom.Controllers
                 return RedirectToAction("Index", "Home", new { area = "Admin" });
             }
 
-            var newsLastThree = newService.GetLastThreeNews();
-            var newsRest = newService.GetRemainingNews();
-
-            NewAllViewModel news = new NewAllViewModel()
-            {
-                LastThreeNews = newsLastThree,
-                RestOfNews = newsRest
-            };
-
-            return View(news);
+            return RedirectToAction("All", "New");
         }
 
         public IActionResult Privacy()

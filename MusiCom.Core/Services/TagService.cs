@@ -1,4 +1,5 @@
-﻿using MusiCom.Core.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.Genre;
 using MusiCom.Core.Models.Tag;
 using MusiCom.Infrastructure.Data.Common;
@@ -67,9 +68,9 @@ namespace MusiCom.Core.Services
         /// </summary>
         /// <returns>All Tags</returns>
         //TODO:
-        public IEnumerable<TagNewAllViewModel> GetAllTags()
+        public async Task<IEnumerable<TagNewAllViewModel>> GetAllTags()
         {
-            var models = repo.All<Tag>()
+            var models = await repo.All<Tag>()
                 .Where(t => t.IsDeleted == false)
                 .Select(t => new TagNewAllViewModel()
                 {
@@ -78,7 +79,8 @@ namespace MusiCom.Core.Services
                     IsDeleted = t.IsDeleted,
                     DateOfCreation = t.DateOfCreation,
                 })
-                .OrderByDescending(t => t.DateOfCreation);
+                .OrderByDescending(t => t.DateOfCreation)
+                .ToListAsync();
 
             return models;
         }

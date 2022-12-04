@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Builder.Internal;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Admin.User;
 using MusiCom.Infrastructure.Data.Common;
@@ -12,30 +14,31 @@ namespace MusiCom.Core.Services.Admin
     public class UserService : IUserService
     {
         private readonly IRepository repo;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public UserService(IRepository _repo)
+        public UserService(IRepository _repo, UserManager<ApplicationUser> _userManager)
         {
             repo = _repo;
+            userManager = _userManager;
         }
 
         public async Task<UserQueryServiceModel> All(string? type = null, string? searchTerm = null, int currentPage = 1, int usersPerPage = 1)
         {
-            var usersQuery = repo.AllReadonly<ApplicationUser>()
-                .Where(u => u.IsDeleted == false);
+            var usersQuery = repo.AllReadonly<ApplicationUser>();
 
             if (!string.IsNullOrWhiteSpace(type))
             {
-                if (type == "UsersOnly")
+                if (type == "UserOnly")
                 {
                     usersQuery = usersQuery
                         .Where(u => u.EditorId == null && u.ArtistId == null);
                 }
-                else if (type == "Editors")
+                else if (type == "Editor")
                 {
                     usersQuery = usersQuery
                         .Where(u => u.EditorId != null && u.ArtistId == null);
                 }
-                else if (type == "Artists")
+                else if (type == "Artist")
                 {
                     usersQuery = usersQuery
                         .Where(u => u.ArtistId != null && u.EditorId == null);
@@ -65,7 +68,8 @@ namespace MusiCom.Core.Services.Admin
                     UserName = e.UserName,
                     Email = e.Email,
                     EditorId = e.EditorId,
-                    ArtistId = e.ArtistId
+                    ArtistId = e.ArtistId,
+                    IsDeleted = e.IsDeleted
                 })
                 .ToListAsync();
 
@@ -76,6 +80,17 @@ namespace MusiCom.Core.Services.Admin
                 TotalUsersCount = totalUsers,
                 Users = users
             };
+        }
+
+        /// <summary>
+        /// Marks a User as NotDeleted
+        /// </summary>
+        /// <param name="user">User who is to be marked as NotDeleted</param>
+        public async Task BringBackUserAsync(ApplicationUser user)
+        {
+            user.IsDeleted = false;
+
+            await repo.SaveChangesAsync();
         }
 
         /// <summary>
@@ -123,7 +138,7 @@ namespace MusiCom.Core.Services.Admin
         /// Marks a User as Deleted
         /// </summary>
         /// <param name="user">User who is to be marked as Deleted</param>
-        public async Task DeleteUser(ApplicationUser user)
+        public async Task DeleteUserAsync(ApplicationUser user)
         {
             user.IsDeleted = true;
 

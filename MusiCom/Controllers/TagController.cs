@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.Genre;
 using MusiCom.Core.Models.Tag;
@@ -10,6 +11,7 @@ namespace MusiCom.Controllers
     /// <summary>
     /// Contains functionalities regarding the tags
     /// </summary>
+    [Authorize(Roles = "Admin, Editor")]
     public class TagController : Controller
     {
         private readonly ITagService tagService;
@@ -24,9 +26,9 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <returns>A View</returns>
         [HttpGet]
-        public IActionResult All()
+        public async Task<IActionResult> All()
         {
-            var tags = tagService.GetAllTags();
+            var tags = await tagService.GetAllTags();
 
             return View(tags);
         }

@@ -11,5 +11,7 @@
         public Guid? EditorId { get; set; }
 
         public Guid? ArtistId { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

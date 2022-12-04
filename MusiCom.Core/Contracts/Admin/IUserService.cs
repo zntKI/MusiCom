@@ -19,6 +19,8 @@ namespace MusiCom.Core.Contracts.Admin
 
         Task RemoveArtistAsync(ApplicationUser user);
 
-        Task DeleteUser(ApplicationUser user);
+        Task DeleteUserAsync(ApplicationUser user);
+
+        Task BringBackUserAsync(ApplicationUser user);
     }
 }
