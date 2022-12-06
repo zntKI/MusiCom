@@ -18,5 +18,7 @@ namespace MusiCom.Core.Contracts
         Task EditTagAsync(Guid id, TagAllViewModel model);
 
         Task DeleteTagAsync(Guid id);
+
+        Task<IEnumerable<string>> GetAllTagNamesAsync();
     }
 }

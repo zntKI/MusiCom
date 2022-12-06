@@ -29,18 +29,29 @@ namespace MusiCom.Controllers
             userManager = _userManager;
         }
 
-        public IActionResult All()
+        /// <summary>
+        /// Shows All News or News which correspond to a given criteria
+        /// </summary>
+        /// <param name="query">The sorting parameters passed by the Url</param>
+        /// <returns>View with the applied sorting</returns>
+        [HttpGet]
+        public async Task<IActionResult> All([FromQuery] NewAllQueryModel query)
         {
-            var newsLastThree = newService.GetLastThreeNews();
-            var newsRest = newService.GetRemainingNews();
+            var queryResult = await newService.GetAllNewsAsync(
+                query.Genre,
+                query.Tag,
+                query.SearchTerm,
+                query.CurrentPage);
 
-            NewAllViewModel news = new NewAllViewModel()
-            {
-                LastThreeNews = newsLastThree,
-                RestOfNews = newsRest
-            };
+            query.TotalNewsCount = queryResult.TotakNewsCount;
+            query.News = queryResult.News;
 
-            return View(news);
+            var newGenres = await genreService.GetAllGenreNames();
+            query.Genres = newGenres;
+            var newTags = await tagService.GetAllTagNamesAsync();
+            query.Tags = newTags;
+
+            return View(query);
         }
 
         /// <summary>

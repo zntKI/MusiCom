@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using MusiCom.Core.Models.Event;
 using MusiCom.Core.Models.New;
 using MusiCom.Infrastructure.Data.Entities.News;
 
@@ -9,11 +10,18 @@ namespace MusiCom.Core.Contracts
     /// </summary>
     public interface INewServices
     {
+        Task<NewQueryServiceModel> GetAllNewsAsync(
+            string? genre = null,
+            string? tag = null,
+            string? searchTerm = null,
+            int currentPage = 1,
+            int newsPerPage = 1);
+
         Task CreateNewAsync(Guid userId, NewAddViewModel model, IFormFile image);
 
-        IEnumerable<NewLastThreeViewModel> GetLastThreeNews();
+        IEnumerable<NewAllNewViewModel> GetLastThreeNews();
 
-        IEnumerable<NewLastThreeViewModel> GetRemainingNews();
+        IEnumerable<NewAllNewViewModel> GetRemainingNews();
 
         Task<New> GetNewByIdAsync(Guid newId);
 

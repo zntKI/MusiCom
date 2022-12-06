@@ -63,6 +63,14 @@ namespace MusiCom.Core.Services
             await repo.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<string>> GetAllTagNamesAsync()
+        {
+            return await repo.AllReadonly<Tag>()
+                .Where(t => t.IsDeleted == false)
+                .Select(t => t.Name)
+                .ToListAsync();
+        }
+
         /// <summary>
         /// Lists all Tags ordered by DateOfCreation
         /// </summary>

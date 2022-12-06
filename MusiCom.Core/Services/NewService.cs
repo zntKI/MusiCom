@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MusiCom.Core.Contracts;
+using MusiCom.Core.Models.Event;
 using MusiCom.Core.Models.New;
 using MusiCom.Infrastructure.Data.Common;
+using MusiCom.Infrastructure.Data.Entities.Events;
 using MusiCom.Infrastructure.Data.Entities.News;
 using System.Linq;
 
@@ -90,6 +92,68 @@ namespace MusiCom.Core.Services
         }
 
         /// <summary>
+        /// Gets all News which correspond to the given criteria
+        /// </summary>
+        /// <param name="genre">Genre Name if passed by the View</param>
+        /// <param name="tag">Tag Name if passed by the View</param>
+        /// <param name="searchTerm">Word or Phrase which will be searched either in the New Title or the New's Creator</param>
+        /// <param name="currentPage">The Current Page of all which hold News</param>
+        /// <param name="newsPerPage">The Number of News that could be held in a Single Page</param>
+        /// <returns>Model which will be used for the Visualisation in the View</returns>
+        public async Task<NewQueryServiceModel> GetAllNewsAsync(string? genre = null, string? tag = null, string? searchTerm = null, int currentPage = 1, int newsPerPage = 1)
+        {
+            var newsQuery = repo.AllReadonly<New>()
+                .Where(n => n.IsDeleted == false);
+
+            if (!String.IsNullOrWhiteSpace(genre))
+            {
+                newsQuery = repo.AllReadonly<New>()
+                    .Where(e => e.Genre.Name == genre);
+            }
+
+            if (!String.IsNullOrWhiteSpace(tag))
+            {
+                newsQuery = repo.AllReadonly<New>()
+                    .Where(e => e.Tags.Any(t => t.Tag.Name == tag));
+            }
+
+            if (!String.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = $"%{searchTerm.ToLower()}%";
+
+                newsQuery = newsQuery
+                    .Where(e => EF.Functions.Like(e.Title.ToLower(), searchTerm) ||
+                        EF.Functions.Like(e.Editor.UserName.ToLower(), searchTerm));
+            }
+
+            var news = await newsQuery
+                .Skip((currentPage - 1) * newsPerPage)
+                .Take(newsPerPage)
+                .OrderByDescending(e => e.PostedOn)
+                .Include(e => e.Editor)
+                .Select(e => new NewAllNewViewModel
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    Image = e.TitleImage,
+                    Editor = new NewAllEditorViewModel()
+                    { 
+                        Id = e.EditorId,
+                        EditorName = $"{e.Editor.FirstName} {e.Editor.LastName}"
+                    }
+                })
+                .ToListAsync();
+
+            var totalNews = await newsQuery.CountAsync();
+
+            return new NewQueryServiceModel()
+            {
+                TotakNewsCount = totalNews,
+                News = news
+            };
+        }
+
+        /// <summary>
         /// Gets all tags which are attached to the given New
         /// </summary>
         /// <param name="newId">New Id</param>
@@ -110,12 +174,12 @@ namespace MusiCom.Core.Services
         /// Takes last three News stored in the Database
         /// </summary>
         /// <returns>Collection of NewLastThreeViewModel</returns>
-        public IEnumerable<NewLastThreeViewModel> GetLastThreeNews()
+        public IEnumerable<NewAllNewViewModel> GetLastThreeNews()
         {
             var news = repo.All<New>()
                 .OrderByDescending(n => n.PostedOn)
                 .Take(3)
-                .Select(n => new NewLastThreeViewModel()
+                .Select(n => new NewAllNewViewModel()
                 { 
                     Id = n.Id,
                     Title = n.Title,
@@ -139,12 +203,12 @@ namespace MusiCom.Core.Services
         /// Takes Remaining News stored in the Database
         /// </summary>
         /// <returns>Collection of NewLastThreeViewModel</returns>
-        public IEnumerable<NewLastThreeViewModel> GetRemainingNews()
+        public IEnumerable<NewAllNewViewModel> GetRemainingNews()
         {
             var news = repo.All<New>()
                 .OrderByDescending(n => n.PostedOn)
                 .Skip(3)
-                .Select(n => new NewLastThreeViewModel()
+                .Select(n => new NewAllNewViewModel()
                 {
                     Id = n.Id,
                     Title = n.Title,

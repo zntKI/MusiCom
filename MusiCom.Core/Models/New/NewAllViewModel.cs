@@ -5,8 +5,8 @@
     /// </summary>
     public class NewAllViewModel
     {
-        public IEnumerable<NewLastThreeViewModel> LastThreeNews { get; set; }
+        public IEnumerable<NewAllNewViewModel> LastThreeNews { get; set; }
 
-        public IEnumerable<NewLastThreeViewModel> RestOfNews { get; set; }
+        public IEnumerable<NewAllNewViewModel> RestOfNews { get; set; }
     }
 }

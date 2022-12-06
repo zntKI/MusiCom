@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MusiCom.Core.Models.Event
 {
     /// <summary>
-    /// Holds information about the Events which will be presented after a given had been applied
+    /// Holds information about the Events which will be presented after a given criteria had been applied
     /// </summary>
     public class EventQueryServiceModel
     {

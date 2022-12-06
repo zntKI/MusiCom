@@ -40,9 +40,9 @@
                         eventt.Artistt.Id == Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000"))
                         {
                             <a class="btn btn-warning" asp-controller="Event" asp-action="Edit" asp-route-id="@eventt.Id">Edit</a>
+                            <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@eventt.Id">Delete</a>
                         }
-                        @if ((User.IsInRole("Admin") || User.IsInRole("Artist")) && 
-                        eventt.Artistt.Id == Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000"))
+                        else if (User.IsInRole("Admin"))
                         {
                             <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@eventt.Id">Delete</a>
                         }
@@ -62,7 +62,16 @@
                             <li><i class="far fa-clock margin-10px-right"></i>@eventt.Date.TimeOfDay</li>
                             <li><i class="fas fa-user margin-5px-right"></i> Artist: @eventt.Artistt.ArtistName</li>
                         </ul>
-                        <a class="butn small margin-10px-top md-no-margin-top" href="event-details.html">Read More <i class="fas fa-long-arrow-alt-right margin-10px-left"></i></a>
+                        @if (User.IsInRole("Artist") &&
+                       eventt.Artistt.Id == Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000"))
+                        {
+                            <a class="btn btn-warning" asp-controller="Event" asp-action="Edit" asp-route-id="@eventt.Id">Edit</a>
+                            <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@eventt.Id">Delete</a>
+                        }
+                        else if (User.IsInRole("Admin"))
+                        {
+                            <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@eventt.Id">Delete</a>
+                        }
                     </div>
                 </div>
                 <div class="col-lg-5 order-1 order-lg-2">

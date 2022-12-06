@@ -1,74 +1,107 @@
 ﻿@using MusiCom.Core.Models.New;
-@model NewAllViewModel
+@model NewAllQueryModel
 
 @{
-    ViewData["Title"] = "Home Page";
-    var newsLastThree = Model.LastThreeNews.ToList();
-    var newsRest = Model.RestOfNews.ToList();
+    ViewBag.Title = "News";
 }
 
-@if (!newsLastThree.Any())
+<h2 class="text-center">@ViewBag.Title</h2>
+@if (User.IsInRole("Editor"))
 {
-    <div class="mt-4 p-5 bg-light">
-        <h1 class="display-4">Welcome to the best place for renting houses!</h1>
-        <p class="lead">
-            There are no houses in the system currently available
-            so why don't you just add one?
-        </p>
-        @*<hr class="my-4">
-        <p class="lead">
-            @if (this.User.Identity.IsAuthenticated)
-            {
-                <a asp-controller="Houses" asp-action="Add" class="btn btn-primary btn-lg"
-                    role="button">Add House</a>
-            }
-        </p>*@
+    <a style="align-content: center; margin-top: 5px; margin-bottom: 5px" class="btn btn-success" asp-controller="New" asp-action="Add">Add</a>
+}
+<hr />
+
+<form method="get">
+    <div class="row">
+        <div class="form-group col-md-3 d-flex justify-content-between">
+            <div class="form-group">
+                <label asp-for="Genre"></label>
+                <select asp-for="Genre" class="form-control">
+                    <option value="">All</option>
+                    @foreach (var genre in Model.Genres)
+                    {
+                        <option value="@genre">@genre</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group col-md-3 d-flex justify-content-between">
+            <div class="form-group">
+                <label asp-for="Tag"></label>
+                <select asp-for="Tag" class="form-control">
+                    <option value="">All</option>
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <option value="@tag">@tag</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="SearchTerm"></label>
+            <input asp-for="SearchTerm" class="form-control" placeholder="...">
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group mt-4 p-2">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </div>
     </div>
+</form>
+
+@if (!Model.News.Any())
+{
+    <h2 class="text-center">No News found by the given criteria!</h2>
 }
 
-<div class="mb-5"></div>
 
-<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
-        @for (int i = 0; i < newsLastThree.Count(); i++)
-        {
-            var neww = newsLastThree[i];
-            var base64 = Convert.ToBase64String(neww.Image);
-            var imageSrc = string.Format("data:image/png;base64,{0}", base64);
-            <div class="carousel-item @(i == 0 ? "active" : string.Empty)">
-                <img class="d-block w-100" style="height:500px"
-                 src="@imageSrc" alt="@neww.Title">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>
-                        <a class="btn btn-primary" asp-controller="New" asp-action="Details"
-                       asp-route-id="@neww.Id">@neww.Title</a>
-                    </h5>
-                </div>
-            </div>
-        }
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
+
+<div class="row">
+    <partial name="_AllPartial" model="@Model.News" />
 </div>
 
-@if (newsRest.Any())
-{
-    @for (int i = 0; i < newsRest.Count(); i++)
+
+
+@{
+    var previousPage = Model.CurrentPage - 1;
+    if (previousPage < 1)
     {
-        var neww = newsRest[i];
-        var base64 = Convert.ToBase64String(neww.Image);
-        var imageSrc = string.Format("data:image/png;base64,{0}", base64);
-        <img class="d-block w-100" style="height:300px; width:300px"
-         src="@imageSrc" alt="@neww.Title">
-            <h5>
-                <a class="btn btn-primary" asp-controller="New" asp-action="Details"
-                asp-route-id="@neww.Id">@neww.Title</a>
-            </h5>
+        previousPage = 1;
     }
+
+    var maxPage = Math.Ceiling((double)Model.TotalNewsCount /
+        NewAllQueryModel.NewPerPage);
 }
+
+
+<div class="row mb-5">
+    <div class="col-md-6 d-grid gap-2 d-md-flex justify-content-md-start">
+        <a class="btn btn-primary @(Model.CurrentPage == 1 ? "disabled" : string.Empty)"
+           asp-controller="New"
+           asp-action="All"
+           asp-route-currentPage="@previousPage"
+           asp-route-genre="@Model.Genre"
+           asp-route-tag="@Model.Tag"
+           asp-route-searchTerm="@Model.SearchTerm"><<</a>
+    </div>
+
+    @{
+        var shouldButtonBeDisabled = Model.CurrentPage == maxPage ||
+        !Model.News.Any();
+    }
+
+    <div class="col-md-6 d-grid gap-2 d-md-flex justify-content-md-end">
+        <a class="btn btn-primary
+           @(shouldButtonBeDisabled ? "disabled" : string.Empty)"
+           asp-controller="New"
+           asp-action="All"
+           asp-route-currentPage="@(Model.CurrentPage + 1)"
+           asp-route-genre="@Model.Genre"
+           asp-route-tag="@Model.Tag"
+           asp-route-searchTerm="@Model.SearchTerm">>></a>
+    </div>
+</div>
