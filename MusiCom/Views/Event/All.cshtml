@@ -6,6 +6,10 @@
 }
 
 <h2 class="text-center">@ViewBag.Title</h2>
+@if (User.IsInRole("Artist"))
+{
+    <a style="align-content: center; margin-top: 5px; margin-bottom: 5px" class="btn btn-success" asp-controller="Event" asp-action="Add">Add</a>
+}
 <hr />
 
 <form method="get">

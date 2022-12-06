@@ -5,26 +5,12 @@
     ViewData["Title"] = "All Genres";
 }
 
-@*<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>
-        Learn about
-        <a href="https://docs.microsoft.com/aspnet/core">
-            building Web apps with ASP.NET Core
-        </a>
-        .
-    </p>
-</div>
-*@
-<!-- Editable table -->
 <div class="card">
     <h3 class="card-header text-center font-weight-bold text-uppercase py-4">
         @ViewData["Title"]
     </h3>
+    <a style="align-content: center; margin-top: 5px; margin-bottom: 5px" class="btn btn-success" asp-controller="Genre" asp-action="Add">Add</a>
     <div class="card-body">
-        <!-- The form that remove buttons will use -->
-        <form id="remove" method="post"></form>
-
         <div id="table" class="table-editable">
             <span class="table-add float-right mb-3 mr-2">
                 <a href="#!" class="text-success">
@@ -46,16 +32,16 @@
                         <tr>
                             <td class="pt-3-half">@genre.Name</td>
                             <td class="pt-3-half">@genre.DateOfCreation</td>
-                                <td>
-                                    <div class="text-center">
-                                        <a class="btn btn-warning" asp-controller="Genre" asp-action="Edit" asp-route-id="@genre.Id">Edit</a>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-center">
-                                        <a class="btn btn-danger" asp-controller="Genre" asp-action="Remove" asp-route-id="@genre.Id">Remove</a>
-                                    </div>
-                                </td>
+                            <td>
+                                <div class="text-center">
+                                    <a class="btn btn-warning" asp-controller="Genre" asp-action="Edit" asp-route-id="@genre.Id">Edit</a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    <a class="btn btn-danger" asp-controller="Genre" asp-action="Remove" asp-route-id="@genre.Id">Remove</a>
+                                </div>
+                            </td>
                         </tr>
                     }
                 </tbody>

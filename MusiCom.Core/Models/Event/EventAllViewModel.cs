@@ -23,6 +23,6 @@ namespace MusiCom.Core.Models.Event
 
         public string Description { get; set; } = null!;
 
-        public string ArtistName { get; set; } = null!;
+        public EventAllArtistViewModel Artistt { get; set; } = null!;
     }
 }

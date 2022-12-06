@@ -39,34 +39,45 @@ namespace MusiCom.Core.Services
                 DateOfCreation = DateTime.Now
             };
 
-            string type = image.ContentType;
-
-            //TODO: Fix
-            if (!type.Contains("image"))
-            {
-                throw new InvalidOperationException();
-            }
-
-            string contentType = type.Substring(type.IndexOf('/') + 1, type.Length - type.Substring(0, type.IndexOf('/')).Length - 1);
-
-            if (contentType != "png" && contentType != "jpeg" && contentType != "jpg")
-            {
-                throw new InvalidOperationException("Please import an image in one of the formats shown above!");
-            }
-
-            //TODO: Fix
-            if (image.Length > 0)
-            {
-                using var stream = new MemoryStream();
-                await image.CopyToAsync(stream);
-                eventt.Image = stream.ToArray();
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
+            await AddImage(eventt, image);
 
             await repo.AddAsync(eventt);
+            await repo.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Marks the Given Event as Deleted
+        /// </summary>
+        /// <param name="eventt">The Event</param>
+        public async Task DeleteEventAsync(Event eventt)
+        {
+            eventt.IsDeleted = true;
+
+            await repo.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Edits a given Event
+        /// </summary>
+        /// <param name="eventt">The Event to be Edited</param>
+        /// <param name="model">The Model which contains the New Data for the Event</param>
+        /// <param name="image">The new Image file if there is such</param>
+        public async Task EditEventAsync(Event eventt, EventEditViewModel model, IFormFile image)
+        {
+            eventt.Title = model.Title;
+            eventt.Description = model.Description;
+            eventt.GenreId = model.GenreId;
+
+            if (model.Date != null)
+            {
+                eventt.Date = (DateTime)model.Date;
+            }
+
+            if (image != null)
+            {
+                await AddImage(eventt, image);
+            }
+
             await repo.SaveChangesAsync();
         }
 
@@ -78,7 +89,7 @@ namespace MusiCom.Core.Services
         /// <param name="currentPage">The Current Page of all which hold Events</param>
         /// <param name="eventsPerPage">The Number of Events that could be held in a Single Page</param>
         /// <returns>Model which will be used for the Visualisation in the View</returns>
-        public async Task<EventQueryServiceModel> GetAllEvents(string? genre = null, string? searchTerm = null, int currentPage = 1, int eventsPerPage = 1)
+        public async Task<EventQueryServiceModel> GetAllEventsAsync(string? genre = null, string? searchTerm = null, int currentPage = 1, int eventsPerPage = 1)
         {
             var eventsQuery = repo.AllReadonly<Event>()
                 .Where(e => e.IsDeleted == false);
@@ -108,7 +119,11 @@ namespace MusiCom.Core.Services
                     Image = e.Image,
                     Date = e.Date,
                     Description = e.Description,
-                    ArtistName = e.Artist.UserName,
+                    Artistt = new EventAllArtistViewModel()
+                    { 
+                        Id = e.ArtistId,
+                        ArtistName = e.Artist.UserName
+                    }
                 })
                 .OrderBy(e => e.Date)
                 .ToListAsync();
@@ -127,10 +142,20 @@ namespace MusiCom.Core.Services
         /// </summary>
         /// <param name="id">Id of the Event</param>
         /// <returns>Collection of Posts</returns>
-        public async Task<IEnumerable<EventPost>> GetAllPostsForEvent(Guid id)
+        public async Task<IEnumerable<EventPost>> GetAllPostsForEventAsync(Guid id)
         {
             return await repo.All<EventPost>(ep => ep.EventId == id)
                 .ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the Event with the given Id from the Database
+        /// </summary>
+        /// <param name="id">The Id of the Event</param>
+        /// <returns></returns>
+        public async Task<Event> GetEventByIdAsync(Guid id)
+        {
+            return await repo.GetByIdAsync<Event>(id);
         }
 
         /// <summary>
@@ -138,7 +163,7 @@ namespace MusiCom.Core.Services
         /// </summary>
         /// <param name="id">Event Id</param>
         /// <returns>EvemtDetailsViewModel</returns>
-        public async Task<EventDetailsViewModel> GetEventById(Guid id)
+        public async Task<EventDetailsViewModel> GetEventByIdForDetailsAsync(Guid id)
         {
             //TODO: Fix
             var entity = await repo.GetByIdAsync<Event>(id);
@@ -154,10 +179,49 @@ namespace MusiCom.Core.Services
                 Date = entity.Date,
                 ArtistName = artist.UserName,
                 Genre = genre,
-                EventPosts = await GetAllPostsForEvent(entity.Id),
+                EventPosts = await GetAllPostsForEventAsync(entity.Id),
             };
 
             return model;
+        }
+
+        /// <summary>
+        /// Adds the given Image to the Event
+        /// </summary>
+        /// <param name="eventt">The Event</param>
+        /// <param name="image">The Image</param>
+        /// <returns>The modified Event</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task<Event> AddImage(Event eventt, IFormFile image)
+        {
+            string type = image.ContentType;
+
+            //TODO: Fix
+            if (!type.Contains("image"))
+            {
+                throw new InvalidOperationException();
+            }
+
+            string contentType = type.Substring(type.IndexOf('/') + 1, type.Length - type.Substring(0, type.IndexOf('/')).Length - 1);
+
+            if (contentType != "png" && contentType != "jpeg" && contentType != "jpg")
+            {
+                throw new InvalidOperationException("Please import an image in one of the formats shown above!");
+            }
+
+            //TODO: Fix
+            if (image.Length > 0)
+            {
+                using var stream = new MemoryStream();
+                await image.CopyToAsync(stream);
+                eventt.Image = stream.ToArray();
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+
+            return eventt;
         }
     }
 }

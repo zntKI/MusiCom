@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Admin.User;
 using MusiCom.Infrastructure.Data.Entities;
+using System.Security.Claims;
 
 namespace MusiCom.Areas.Admin.Controllers
 {
@@ -219,6 +220,11 @@ namespace MusiCom.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteUser(Guid Id)
         {
             var user = await userManager.FindByIdAsync(Id.ToString());
+
+            if (user.Id == Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!))
+            {
+                throw new InvalidOperationException();
+            }
 
             if (user == null)
             {

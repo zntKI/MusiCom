@@ -9,7 +9,6 @@ using System.Security.Claims;
 
 namespace MusiCom.Controllers
 {
-    [Authorize]
     public class EventController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
@@ -32,7 +31,7 @@ namespace MusiCom.Controllers
         [HttpGet]
         public async Task<IActionResult> All([FromQuery] EventAllQueryModel query)
         {
-            var queryResult = await eventService.GetAllEvents(
+            var queryResult = await eventService.GetAllEventsAsync(
                 query.Genre,
                 query.SearchTerm,
                 query.CurrentPage,
@@ -52,6 +51,7 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <returns>The View for Adding an Event</returns>
         [HttpGet]
+        [Authorize(Roles = "Artist")]
         public IActionResult Add()
         {
             EventAddViewModel model = new EventAddViewModel()
@@ -69,14 +69,15 @@ namespace MusiCom.Controllers
         /// <param name="image">Image File, inserted when Creating the Event</param>
         /// <returns>Redirects to All Events</returns>
         [HttpPost]
+        [Authorize(Roles = "Artist")]
         public async Task<IActionResult> Add(EventAddViewModel model, IFormFile image)
         {
             var artist = await userManager.GetUserAsync(User);
 
-            //if (!User.IsInRole("Artist"))
-            //{
-            //    throw new InvalidOperationException();
-            //}
+            if (!User.IsInRole("Artist"))
+            {
+                throw new InvalidOperationException();
+            }
 
             ModelState.Remove("Image");
             if (!ModelState.IsValid)
@@ -94,7 +95,7 @@ namespace MusiCom.Controllers
                 throw;
             }
 
-            return RedirectToAction("All", "Event");
+            return RedirectToAction("All");
         }
 
         /// <summary>
@@ -105,9 +106,125 @@ namespace MusiCom.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid Id)
         {
-            var eventt = await eventService.GetEventById(Id);
+            var eventt = await eventService.GetEventByIdForDetailsAsync(Id);
 
             return View(eventt);
+        }
+
+        /// <summary>
+        /// Deletes the Event with the given Id
+        /// </summary>
+        /// <param name="Id">Id of the Event</param>
+        /// <returns>Redirects to Action All</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        [Authorize(Roles = "Artist, Admin")]
+        public async Task<IActionResult> Delete(Guid Id)
+        {
+            var user = await userManager.GetUserAsync(User);
+            var eventt = await eventService.GetEventByIdAsync(Id);
+
+            if (user == null || eventt == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (user.Id != eventt.ArtistId)
+            {
+                throw new InvalidOperationException();
+            }
+
+            try
+            {
+                await eventService.DeleteEventAsync(eventt);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return RedirectToAction("All");
+        }
+
+        /// <summary>
+        /// Renders a View for Editing an Event
+        /// </summary>
+        /// <param name="Id">Id of the Event</param>
+        /// <returns>View for Editing</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        [HttpGet]
+        [Authorize(Roles = "Artist")]
+        public async Task<IActionResult> Edit(Guid Id)
+        {
+            var user = await userManager.GetUserAsync(User);
+            var eventt = await eventService.GetEventByIdAsync(Id);
+
+            if (user == null || eventt == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            //if (user.Id != eventt.ArtistId)
+            //{
+            //    throw new InvalidOperationException();
+            //}
+
+            var model = new EventEditViewModel()
+            {
+                Id = eventt.Id,
+                Title = eventt.Title,
+                Description = eventt.Description,
+                Image = eventt.Image,
+                Date = eventt.Date,
+                Genres = genreService.GetAllGenres(),
+                ArtistId = eventt.ArtistId,
+                GenreId = eventt.GenreId
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Edits an Event
+        /// </summary>
+        /// <param name="Id">Id of the Event</param>
+        /// <param name="model">Edited Data for the Event</param>
+        /// <param name="image">New Image if there is such</param>
+        /// <returns>Redirects to Action All</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        [HttpPost]
+        [Authorize(Roles = "Artist")]
+        public async Task<IActionResult> Edit(Guid Id, EventEditViewModel model, IFormFile image)
+        {
+            ModelState.Remove("Image");
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var eventt = await eventService.GetEventByIdAsync(Id);
+
+            if (eventt == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (Id != model.Id)
+            {
+                throw new InvalidOperationException();
+            }
+
+            try
+            {
+                await eventService.EditEventAsync(eventt, model, image);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return RedirectToAction("All");
         }
     }
 }

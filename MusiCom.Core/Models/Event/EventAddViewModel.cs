@@ -1,8 +1,5 @@
 ﻿using MusiCom.Core.Models.Genre;
-using MusiCom.Infrastructure.Data.Entities;
-using MusiCom.Infrastructure.Data.Entities.Events;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using static MusiCom.Infrastructure.Data.DataConstraints.EventC;
 
 namespace MusiCom.Core.Models.Event
