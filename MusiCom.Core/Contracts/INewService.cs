@@ -2,6 +2,8 @@
 using MusiCom.Core.Models.Event;
 using MusiCom.Core.Models.New;
 using MusiCom.Infrastructure.Data.Entities.News;
+using static MusiCom.Infrastructure.Data.DataConstraints;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MusiCom.Core.Contracts
 {
@@ -28,5 +30,8 @@ namespace MusiCom.Core.Contracts
         ICollection<Tag> GetAllTagsForNew(Guid newId);
 
         ICollection<NewComment> GetAllCommentsForNew(Guid newId);
+        Task DeleteNewAsync(New neww);
+
+        Task EditNewAsync(New neww, NewEditViewModel model, IFormFile image);
     }
 }

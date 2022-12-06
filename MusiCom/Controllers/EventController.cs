@@ -164,10 +164,10 @@ namespace MusiCom.Controllers
                 throw new InvalidOperationException();
             }
 
-            //if (user.Id != eventt.ArtistId)
-            //{
-            //    throw new InvalidOperationException();
-            //}
+            if (user.Id != eventt.ArtistId)
+            {
+                throw new InvalidOperationException();
+            }
 
             var model = new EventEditViewModel()
             {

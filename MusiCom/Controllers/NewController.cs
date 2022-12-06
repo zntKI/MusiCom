@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using MusiCom.Infrastructure.Data.Entities.News;
 using MusiCom.Core.Models.Comment;
 using MusiCom.Core.Contracts.Admin;
+using Microsoft.AspNetCore.Authorization;
+using MusiCom.Core.Models.Event;
+using static MusiCom.Infrastructure.Data.DataConstraints;
+using MusiCom.Core.Models.Tag;
 
 namespace MusiCom.Controllers
 {
@@ -41,7 +45,8 @@ namespace MusiCom.Controllers
                 query.Genre,
                 query.Tag,
                 query.SearchTerm,
-                query.CurrentPage);
+                query.CurrentPage,
+                NewAllQueryModel.NewPerPage);
 
             query.TotalNewsCount = queryResult.TotakNewsCount;
             query.News = queryResult.News;
@@ -59,20 +64,15 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <returns>A View with the Model</returns>
         [HttpGet]
+        [Authorize(Roles = "Editor")]
         public async Task<IActionResult> Add()
         {
             var tags = await tagService.GetAllTags();
-            var selectList = new List<SelectListItem>();
-            foreach (var tag in tags)
-            {
-                var item = new SelectListItem(tag.Name, tag.Id.ToString());
-                selectList.Add(item);
-            }
-
+            
             NewAddViewModel model = new NewAddViewModel()
             {
                 Genres = genreService.GetAllGenres(),
-                TagsAll = selectList
+                TagsAll = Selects(tags)
             };
 
             return View(model);
@@ -85,6 +85,7 @@ namespace MusiCom.Controllers
         /// <param name="TitlePhoto">The TitlePhotoFile passed by the View</param>
         /// <returns>Redirects to Action "Index" in HomeController</returns>
         [HttpPost]
+        [Authorize(Roles = "Editor")]
         public async Task<IActionResult> Add(NewAddViewModel model, IFormFile image)
         {
             var editor = await userManager.GetUserAsync(User);
@@ -144,6 +145,134 @@ namespace MusiCom.Controllers
             };
 
             return View(model);
+        }
+
+        /// <summary>
+        /// Deletes the New with the given Id
+        /// </summary>
+        /// <param name="Id">Id of the New</param>
+        /// <returns>Redirects to Action All</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        [Authorize(Roles = "Artist, Admin")]
+        public async Task<IActionResult> Delete(Guid Id)
+        {
+            var user = await userManager.GetUserAsync(User);
+            var neww = await newService.GetNewByIdAsync(Id);
+
+            if (user == null || neww == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (user.Id != neww.EditorId)
+            {
+                throw new InvalidOperationException();
+            }
+
+            try
+            {
+                await newService.DeleteNewAsync(neww);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return RedirectToAction("All");
+        }
+
+        /// <summary>
+        /// Renders a View for Editing a New
+        /// </summary>
+        /// <param name="Id">Id of the New</param>
+        /// <returns>View for Editing</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        [HttpGet]
+        [Authorize(Roles = "Editor")]
+        public async Task<IActionResult> Edit(Guid Id)
+        {
+            var user = await userManager.GetUserAsync(User);
+            var neww = await newService.GetNewByIdAsync(Id);
+
+            if (user == null || neww == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (user.Id != neww.EditorId)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var model = new NewEditViewModel()
+            {
+                Id = neww.Id,
+                Title = neww.Title,
+                Content = neww.Content,
+                TitleImage = neww.TitleImage,
+                Genres = genreService.GetAllGenres(),
+                TagsAll = Selects(await tagService.GetAllTags()),
+                EditorId = neww.EditorId,
+                GenreId = neww.GenreId,
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Edits a New
+        /// </summary>
+        /// <param name="Id">Id of the New</param>
+        /// <param name="model">Edited Data for the New</param>
+        /// <param name="image">New Image if there is such</param>
+        /// <returns>Redirects to Action All</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        [HttpPost]
+        [Authorize(Roles = "Editor")]
+        public async Task<IActionResult> Edit(Guid Id, NewEditViewModel model, IFormFile image)
+        {
+            ModelState.Remove("image");
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var neww = await newService.GetNewByIdAsync(Id);
+
+            if (neww == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (Id != model.Id)
+            {
+                throw new InvalidOperationException();
+            }
+
+            try
+            {
+                await newService.EditNewAsync(neww, model, image);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return RedirectToAction("All");
+        }
+
+        public List<SelectListItem> Selects(IEnumerable<TagNewAllViewModel> tags)
+        {
+            var selectList = new List<SelectListItem>();
+            foreach (var tag in tags)
+            {
+                var item = new SelectListItem(tag.Name, tag.Id.ToString());
+                selectList.Add(item);
+            }
+
+            return selectList;
         }
     }
 }

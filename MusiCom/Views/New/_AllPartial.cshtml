@@ -31,15 +31,15 @@
                         <ul class="event-time margin-10px-bottom md-margin-5px-bottom">
                             <li><i class="fas fa-user margin-5px-right"></i> Editor: @neww.Editor.EditorName</li>
                         </ul>
-                        @if (User.IsInRole("Artist") &&
+                        @if (User.IsInRole("Editor") &&
                         neww.Editor.Id == Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000"))
                         {
-                            <a class="btn btn-warning" asp-controller="Event" asp-action="Edit" asp-route-id="@neww.Id">Edit</a>
+                            <a class="btn btn-warning" asp-controller="New" asp-action="Edit" asp-route-id="@neww.Id">Edit</a>
+                            <a class="btn btn-danger" asp-controller="New" asp-action="Delete" asp-route-id="@neww.Id">Delete</a>
                         }
-                        @if ((User.IsInRole("Admin") || User.IsInRole("Artist")) &&
-                        neww.Editor.Id == Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000"))
+                        else if (User.IsInRole("Admin"))
                         {
-                            <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@neww.Id">Delete</a>
+                            <a class="btn btn-danger" asp-controller="New" asp-action="Delete" asp-route-id="@neww.Id">Delete</a>
                         }
                     </div>
                 </div>
@@ -54,17 +54,17 @@
                     <div class="padding-60px-lr md-padding-50px-lr sm-padding-30px-all xs-padding-25px-all">
                         <h5 class="margin-15px-bottom md-margin-10px-bottom font-size22 md-font-size20 xs-font-size18 font-weight-500"><a asp-controller="Event" asp-action="Details" asp-route-id="@neww.Id" class="text-theme-color">@neww.Title</a></h5>
                         <ul class="event-time margin-10px-bottom md-margin-5px-bottom">
-                            <li><i class="fas fa-user margin-5px-right"></i> Artist: @neww.Editor.EditorName</li>
+                            <li><i class="fas fa-user margin-5px-right"></i> Editor: @neww.Editor.EditorName</li>
                         </ul>
-                        @if (User.IsInRole("Artist") &&
+                        @if (User.IsInRole("Editor") &&
                         neww.Editor.Id == Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000"))
                         {
-                            <a class="btn btn-warning" asp-controller="Event" asp-action="Edit" asp-route-id="@neww.Id">Edit</a>
+                            <a class="btn btn-warning" asp-controller="New" asp-action="Edit" asp-route-id="@neww.Id">Edit</a>
+                                <a class="btn btn-danger" asp-controller="New" asp-action="Delete" asp-route-id="@neww.Id">Delete</a>
                         }
-                        @if ((User.IsInRole("Admin") || User.IsInRole("Artist")) &&
-                        neww.Editor.Id == Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000"))
+                        else if (User.IsInRole("Admin"))
                         {
-                            <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@neww.Id">Delete</a>
+                            <a class="btn btn-danger" asp-controller="New" asp-action="Delete" asp-route-id="@neww.Id">Delete</a>
                         }
                     </div>
                 </div>

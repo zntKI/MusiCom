@@ -7,6 +7,7 @@ using MusiCom.Infrastructure.Data.Common;
 using MusiCom.Infrastructure.Data.Entities.Events;
 using MusiCom.Infrastructure.Data.Entities.News;
 using System.Linq;
+using static MusiCom.Infrastructure.Data.DataConstraints;
 
 namespace MusiCom.Core.Services
 {
@@ -25,9 +26,9 @@ namespace MusiCom.Core.Services
         /// <summary>
         /// Creates a New and Seeds it to the Database
         /// </summary>
-        /// <param name="userId">EditorId passed by the Controller</param>
+        /// <param name="editorId">EditorId passed by the Controller</param>
         /// <param name="model">ViewModel passed by the Controller</param>
-        /// <param name="titlePhoto">The ImageFile passed by the Controller</param>
+        /// <param name="image">The ImageFile passed by the Controller</param>
         public async Task CreateNewAsync(Guid editorId, NewAddViewModel model, IFormFile image)
         {
             New neww = new New()
@@ -78,6 +79,51 @@ namespace MusiCom.Core.Services
         }
 
         /// <summary>
+        /// Marks the Given New as Deleted
+        /// </summary>
+        /// <param name="eventt">The New</param>
+        public async Task DeleteNewAsync(New neww)
+        {
+            neww.IsDeleted = true;
+
+            await repo.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Edits a given New
+        /// </summary>
+        /// <param name="neww">The New to be Edited</param>
+        /// <param name="model">The Model which contains the New Data for the New</param>
+        /// <param name="image">The new Image file if there is such</param>
+        public async Task EditNewAsync(New neww, NewEditViewModel model, IFormFile image)
+        {
+            neww.Title = model.Title;
+            neww.Content = model.Content;
+            neww.GenreId = model.GenreId;
+
+            //foreach (var tag in model.Tags)
+            //{
+            //    if (!neww.Tags.Any(et => et.TagId == tag))
+            //    {
+            //        neww.Tags = model.Tags
+            //        .Select(id => new NewTags()
+            //        {
+            //            TagId = id,
+            //            DateOfCreation = DateTime.Now,
+            //            IsDeleted = false
+            //        }).ToList();
+            //    }
+            //}
+
+            if (image != null)
+            {
+                await AddImage(neww, image);
+            }
+
+            await repo.SaveChangesAsync();
+        }
+
+        /// <summary>
         /// Gets All Comments attached to the New
         /// </summary>
         /// <param name="newId">New Id</param>
@@ -123,7 +169,8 @@ namespace MusiCom.Core.Services
 
                 newsQuery = newsQuery
                     .Where(e => EF.Functions.Like(e.Title.ToLower(), searchTerm) ||
-                        EF.Functions.Like(e.Editor.UserName.ToLower(), searchTerm));
+                        EF.Functions.Like(e.Editor.FirstName!.ToLower(), searchTerm) ||
+                        EF.Functions.Like(e.Editor.LastName!.ToLower(), searchTerm));
             }
 
             var news = await newsQuery
@@ -216,6 +263,45 @@ namespace MusiCom.Core.Services
                 });
 
             return news;
+        }
+
+        /// <summary>
+        /// Adds the given Image to the New
+        /// </summary>
+        /// <param name="neww">The New</param>
+        /// <param name="image">The Image</param>
+        /// <returns>The modified New</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task<New> AddImage(New neww, IFormFile image)
+        {
+            string type = image.ContentType;
+
+            //TODO: Fix
+            if (!type.Contains("image"))
+            {
+                throw new InvalidOperationException();
+            }
+
+            string contentType = type.Substring(type.IndexOf('/') + 1, type.Length - type.Substring(0, type.IndexOf('/')).Length - 1);
+
+            if (contentType != "png" && contentType != "jpeg" && contentType != "jpg")
+            {
+                throw new InvalidOperationException("Please import an image in one of the formats shown above!");
+            }
+
+            //TODO: Fix
+            if (image.Length > 0)
+            {
+                using var stream = new MemoryStream();
+                await image.CopyToAsync(stream);
+                neww.TitleImage = stream.ToArray();
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+
+            return neww;
         }
     }
 }
