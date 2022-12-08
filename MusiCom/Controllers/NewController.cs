@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using MusiCom.Core.Models.Event;
 using static MusiCom.Infrastructure.Data.DataConstraints;
 using MusiCom.Core.Models.Tag;
+using MusiCom.Core.Constants;
 
 namespace MusiCom.Controllers
 {
@@ -202,7 +203,9 @@ namespace MusiCom.Controllers
 
             if (user.Id != neww.EditorId)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "You are not allowed to edit other Editor's News";
+
+                return RedirectToAction("All");
             }
 
             var model = new NewEditViewModel()

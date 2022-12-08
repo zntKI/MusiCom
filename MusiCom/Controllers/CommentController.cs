@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MusiCom.Core.Contracts;
-using MusiCom.Core.Models.Comment;
 using MusiCom.Core.Models.New;
 using MusiCom.Infrastructure.Data.Entities;
 
@@ -30,6 +30,7 @@ namespace MusiCom.Controllers
         /// <param name="Id">New Id</param>
         /// <returns>Redirects to Action Details from NewController</returns>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(NewDetailsViewModel model, Guid Id)
         {
             var editor = await userManager.GetUserAsync(User);

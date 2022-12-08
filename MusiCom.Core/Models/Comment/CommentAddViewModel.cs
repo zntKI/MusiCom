@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using static MusiCom.Infrastructure.Data.DataConstraints.NewCommentC;
 
 namespace MusiCom.Core.Models.Comment
 {
@@ -11,6 +8,9 @@ namespace MusiCom.Core.Models.Comment
     /// </summary>
     public class CommentAddViewModel
     {
-        public string Content { get; set; }
+        [Required]
+        [MinLength(ContentMinLength, ErrorMessage = "Content must be at least {1} symbols")]
+        [MaxLength(ContentMaxLength, ErrorMessage = "Content must be up to {1} symbols")]
+        public string Content { get; set; } = null!;
     }
 }

@@ -55,6 +55,7 @@
     <div class="col-8">
         <label>Comment: </label>
         <textarea asp-for="@Model.CurrentComment.Content" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="@Model.CurrentComment.Content" class="text-danger"></span>
     </div>
     <div class="col-4">
         User Name: @User?.Identity?.Name<br />
@@ -116,3 +117,7 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
