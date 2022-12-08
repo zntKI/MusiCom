@@ -18,10 +18,6 @@ namespace MusiCom.Core.Services.Admin
             repo = _repo;
         }
 
-        /// <summary>
-        /// Creates a Genre
-        /// </summary>
-        /// <param name="model">model passed by the controller</param>
         public async Task CreateGenreAsync(GenreViewModel model)
         {
             var genre = new Genre()
@@ -47,11 +43,6 @@ namespace MusiCom.Core.Services.Admin
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Edits a Genre with a given Id
-        /// </summary>
-        /// <param name="id">Id of the Genre</param>
-        /// <param name="model">Model which is passed from the View</param>
         public async Task EditGenreAsync(Guid id, GenreAllViewModel model)
         {
             var genre = await GetGenreByIdAsync(id);
@@ -74,22 +65,18 @@ namespace MusiCom.Core.Services.Admin
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Lists all Genres ordered by DateOfCreation
-        /// </summary>
-        /// <returns>All Genres</returns>
-        //TODO:
-        public IEnumerable<GenreAllViewModel> GetAllGenres()
+        public async Task<IEnumerable<GenreAllViewModel>> GetAllGenres()
         {
-            var models = repo.All<Genre>()
+            var models = await repo.AllReadonly<Genre>()
                 .Where(g => g.IsDeleted == false)
+                .OrderByDescending(g => g.DateOfCreation)
                 .Select(g => new GenreAllViewModel()
                 {
                     Id = g.Id,
                     Name = g.Name,
                     DateOfCreation = g.DateOfCreation
                 })
-                .OrderByDescending(g => g.DateOfCreation);
+                .ToListAsync();
 
             return models;
         }

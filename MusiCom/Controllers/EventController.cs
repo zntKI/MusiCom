@@ -52,11 +52,11 @@ namespace MusiCom.Controllers
         /// <returns>The View for Adding an Event</returns>
         [HttpGet]
         [Authorize(Roles = "Artist")]
-        public IActionResult Add()
+        public async Task<IActionResult> Add()
         {
             EventAddViewModel model = new EventAddViewModel()
             { 
-                Genres = genreService.GetAllGenres()
+                Genres = await genreService.GetAllGenres()
             };
 
             return View(model);
@@ -176,7 +176,7 @@ namespace MusiCom.Controllers
                 Description = eventt.Description,
                 Image = eventt.Image,
                 Date = eventt.Date,
-                Genres = genreService.GetAllGenres(),
+                Genres = await genreService.GetAllGenres(),
                 ArtistId = eventt.ArtistId,
                 GenreId = eventt.GenreId
             };

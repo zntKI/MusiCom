@@ -72,7 +72,7 @@ namespace MusiCom.Controllers
             
             NewAddViewModel model = new NewAddViewModel()
             {
-                Genres = genreService.GetAllGenres(),
+                Genres = await genreService.GetAllGenres(),
                 TagsAll = Selects(tags)
             };
 
@@ -214,7 +214,7 @@ namespace MusiCom.Controllers
                 Title = neww.Title,
                 Content = neww.Content,
                 TitleImage = neww.TitleImage,
-                Genres = genreService.GetAllGenres(),
+                Genres = await genreService.GetAllGenres(),
                 TagsAll = Selects(await tagService.GetAllTags()),
                 EditorId = neww.EditorId,
                 GenreId = neww.GenreId,

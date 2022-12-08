@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MusiCom.Core.Constants;
 using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Genre;
 using MusiCom.Infrastructure.Data.Entities.News;
@@ -21,11 +22,10 @@ namespace MusiCom.Areas.Admin.Controllers
         /// <summary>
         /// Renders a view which shows all genres
         /// </summary>
-        /// <returns>A View</returns>
         [HttpGet]
-        public IActionResult All()
+        public async Task<IActionResult> All()
         {
-            var genres = genreService.GetAllGenres();
+            var genres = await genreService.GetAllGenres();
 
             return View(genres);
         }
@@ -33,7 +33,6 @@ namespace MusiCom.Areas.Admin.Controllers
         /// <summary>
         /// Renders the view for add functionality
         /// </summary>
-        /// <returns>AddView</returns>
         [HttpGet]
         public IActionResult Add()
         { 
@@ -45,8 +44,8 @@ namespace MusiCom.Areas.Admin.Controllers
         /// <summary>
         /// Adds a genre
         /// </summary>
-        /// <param name="model">receives the genre model from the client</param>
-        /// <returns>Redirects to Home page</returns>
+        /// <param name="model">Receives the Genre Model from the Client</param>
+        /// <returns>Redirects to Action All</returns>
         [HttpPost]
         public async Task<IActionResult> Add(GenreViewModel model)
         {
@@ -57,23 +56,24 @@ namespace MusiCom.Areas.Admin.Controllers
 
             await genreService.CreateGenreAsync(model);
 
-            return RedirectToAction("All", "Genre");
+            return RedirectToAction("All");
         }
 
         /// <summary>
-        /// Finds the Genre with the given Id and then renders a View
+        /// Finds the Genre with the given Id
         /// </summary>
-        /// <param name="id">The Id of the Genre which is about to be Edited</param>
-        /// <returns>A View</returns>
+        /// <param name="id">Id of the Genre which is about to be Edited</param>
+        /// <returns>View for Editing the Genre</returns>
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
             Genre genre = await genreService.GetGenreByIdAsync(id);
 
-            //TODO:
             if (genre == null)
             {
-                return BadRequest();
+                TempData[MessageConstant.ErrorMessage] = "There is no such Genre!";
+
+                return RedirectToAction("All");
             }
 
             GenreAllViewModel model = new GenreAllViewModel()
@@ -88,9 +88,9 @@ namespace MusiCom.Areas.Admin.Controllers
         /// <summary>
         /// Edits the Genre
         /// </summary>
-        /// <param name="id">The Id of the Genre which is Edited</param>
-        /// <param name="model">The Genre</param>
-        /// <returns>Redirects to All Action</returns>
+        /// <param name="id">Id of the Genre which is Edited</param>
+        /// <param name="model">The Genre Model containing the new Data</param>
+        /// <returns>Redirects to Action All</returns>
         [HttpPost]
         public async Task<IActionResult> Edit(Guid id, GenreAllViewModel model)
         {
@@ -101,25 +101,31 @@ namespace MusiCom.Areas.Admin.Controllers
 
             await genreService.EditGenreAsync(id, model);
 
-            return RedirectToAction("All", "Genre");
+            TempData[MessageConstant.SuccessMessage] = "Successfully edited Genre";
+
+            return RedirectToAction("All");
         }
 
         /// <summary>
         /// Marks the given Genre as Deleted
         /// </summary>
-        /// <param name="id">The Id of the given Genre</param>
-        /// <returns>Redirects to All Action</returns>
+        /// <param name="id">Id of the given Genre</param>
+        /// <returns>Redirects to Action All</returns>
+        [HttpPost]
         public async Task<IActionResult> Remove(Guid id)
         {
-            //TODO:
             if ((await genreService.GetGenreByIdAsync(id)) == null)
             {
-                return BadRequest();
+                TempData[MessageConstant.ErrorMessage] = "There is no such Genre";
+
+                return RedirectToAction("All");
             }
 
             await genreService.DeleteGenreAsync(id);
 
-            return RedirectToAction("All", "Genre");
+            TempData[MessageConstant.SuccessMessage] = "Successfully added Genre";
+
+            return RedirectToAction("All");
         }
     }
 }
