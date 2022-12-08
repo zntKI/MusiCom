@@ -93,13 +93,13 @@
 
                         <ul class="list-inline d-sm-flex my-0">
                             <li class="list-inline-item g-mr-20">
-                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Comment" asp-action="AddLike" asp-route-cId="@comment?.Id" asp-route-mId="@Model.Id">
+                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Comment" asp-action="AddLike" asp-route-cId="@comment?.Id" asp-route-nId="@Model.Id">
                                     <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>
                                     @comment?.NumberOfLikes
                                 </a>
                             </li>
                             <li class="list-inline-item g-mr-20">
-                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Comment" asp-action="AddDislike" asp-route-cId="@comment?.Id" asp-route-mId="@Model.Id">
+                                <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" asp-controller="Comment" asp-action="AddDislike" asp-route-cId="@comment?.Id" asp-route-nId="@Model.Id">
                                     <i class="fa fa-thumbs-down g-pos-rel g-top-1 g-mr-3"></i>
                                     @comment?.NumberOfDislikes
                                 </a>

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MusiCom.Core.Constants;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Services;
 using MusiCom.Infrastructure.Data.Entities;
@@ -150,11 +151,6 @@ namespace MusiCom.Controllers
         {
             var user = await userManager.GetUserAsync(User);
 
-            if (user == null)
-            {
-                return BadRequest();
-            }
-
             return View(user);
         }
 
@@ -168,31 +164,28 @@ namespace MusiCom.Controllers
         {
             if (image == null)
             {
+                TempData[MessageConstant.ErrorMessage] = "Please insert an Image";
                 return RedirectToAction("Details");
             }
 
             var user = await userManager.GetUserAsync(User);
 
-            if (user == null)
-            {
-                return BadRequest();
-            }
-
             string type = image.ContentType;
 
             if (!type.Contains("image"))
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Please insert an Image";
+                return RedirectToAction("Details");
             }
 
             string contentType = type.Substring(type.IndexOf('/') + 1, type.Length - type.Substring(0, type.IndexOf('/')).Length - 1);
 
             if (contentType != "png" && contentType != "jpeg" && contentType != "jpg")
             {
-                throw new InvalidOperationException("Please import an image in one of the formats shown above!");
+                TempData[MessageConstant.ErrorMessage] = "Wrong Image extension!";
+                return RedirectToAction("Details");
             }
 
-            //TODO: Fix
             if (image.Length > 0)
             {
                 using var stream = new MemoryStream();
@@ -201,7 +194,8 @@ namespace MusiCom.Controllers
             }
             else
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
+                return RedirectToAction("Details");
             }
 
             await userManager.UpdateAsync(user);
@@ -213,17 +207,12 @@ namespace MusiCom.Controllers
         /// Deletes a Photo from the User profile if it exists
         /// </summary>
         /// <returns>Redirects to User Details page</returns>
+        [HttpPost]
         public async Task<IActionResult> DeletePhoto()
         {
             var user = await userManager.GetUserAsync(User);
 
-            if (user == null)
-            {
-                return BadRequest();
-            }
-
             user.Image = null;
-
             await userManager.UpdateAsync(user);
 
             return RedirectToAction("Details");

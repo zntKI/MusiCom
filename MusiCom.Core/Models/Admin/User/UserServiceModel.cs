@@ -1,5 +1,8 @@
 ﻿namespace MusiCom.Core.Models.Admin.User
 {
+    /// <summary>
+    /// Model holding data for User
+    /// </summary>
     public class UserServiceModel
     {
         public Guid Id { get; set; }

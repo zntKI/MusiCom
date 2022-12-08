@@ -2,6 +2,9 @@
 
 namespace MusiCom.Core.Models.Admin.User
 {
+    /// <summary>
+    /// Model holding the query parameters for Sorting Users
+    /// </summary>
     public class AllUsersQueryModel
     {
         public const int UsersPerPage = 10;

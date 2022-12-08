@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MusiCom.Core.Constants;
 using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Admin.User;
+using MusiCom.Extensions;
 using MusiCom.Infrastructure.Data.Entities;
-using System.Security.Claims;
 
 namespace MusiCom.Areas.Admin.Controllers
 {
+    /// <summary>
+    /// Contains logic for the Admin to Controll Users
+    /// </summary>
     public class UserController : AdminController
     {
         private readonly IUserService userService;
@@ -26,7 +30,7 @@ namespace MusiCom.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> All([FromQuery] AllUsersQueryModel query)
         {
-            var queryResult = await userService.All(
+            var queryResult = await userService.AllAsync(
                 query.Type,
                 query.SearchTerm,
                 query.CurrentPage,
@@ -51,14 +55,14 @@ namespace MusiCom.Areas.Admin.Controllers
         /// Renders view to which a UserAddViewModel is passed
         /// </summary>
         /// <param name="Id">Id of the User to be promoted</param>
-        /// <returns>A View</returns>
         [HttpGet]
-        public IActionResult MakeEditor(Guid Id)
+        public async Task<IActionResult> MakeEditor(Guid Id)
         {
-            //if (Id == Guid.Empty)
-            //{
-            //    throw new InvalidOperationException();
-            //}
+            if ((await userManager.FindByIdAsync(Id.ToString())) == null)
+            {
+                TempData[MessageConstant.ErrorMessage] = "There is no such User";
+                return RedirectToAction("All");
+            }
 
             var model = new EditorAddViewModel()
             {
@@ -74,7 +78,6 @@ namespace MusiCom.Areas.Admin.Controllers
         /// <param name="model">Model passed by the View</param>
         /// <param name="Id">Id of the User</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
         [HttpPost]
         public async Task<IActionResult> MakeEditor(EditorAddViewModel model, Guid Id)
         {
@@ -87,12 +90,14 @@ namespace MusiCom.Areas.Admin.Controllers
 
             if (user == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "There is no such User";
+                return RedirectToAction("All");
             }
 
             if (await userManager.IsInRoleAsync(user, "Editor"))
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "User is already an Editor";
+                return RedirectToAction("All");
             }
 
             try
@@ -102,11 +107,11 @@ namespace MusiCom.Areas.Admin.Controllers
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
+                return RedirectToAction("All");
             }
 
-            return RedirectToAction("All", "User");
+            return RedirectToAction("All");
         }
 
         /// <summary>
@@ -114,19 +119,21 @@ namespace MusiCom.Areas.Admin.Controllers
         /// </summary>
         /// <param name="Id">Id of the User</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        [HttpPost]
         public async Task<IActionResult> RemoveEditor(Guid Id)
         {
             var user = await userManager.FindByIdAsync(Id.ToString());
 
             if (user == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "There is no such User";
+                return RedirectToAction("All");
             }
 
             if (!(await userManager.IsInRoleAsync(user, "Editor")))
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "User is not an Editor";
+                return RedirectToAction("All");
             }
 
             try
@@ -136,11 +143,11 @@ namespace MusiCom.Areas.Admin.Controllers
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
+                return RedirectToAction("All");
             }
 
-            return RedirectToAction("All", "User");
+            return RedirectToAction("All");
         }
 
         /// <summary>
@@ -148,19 +155,21 @@ namespace MusiCom.Areas.Admin.Controllers
         /// </summary>
         /// <param name="Id">Id of the User</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        [HttpPost]
         public async Task<IActionResult> MakeArtist(Guid Id)
         {
             var user = await userManager.FindByIdAsync(Id.ToString());
 
             if (user == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "There is no such User";
+                return RedirectToAction("All");
             }
 
             if (await userManager.IsInRoleAsync(user, "Artist"))
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "User is already an Artist";
+                return RedirectToAction("All");
             }
 
             try
@@ -170,11 +179,11 @@ namespace MusiCom.Areas.Admin.Controllers
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
+                return RedirectToAction("All");
             }
 
-            return RedirectToAction("All", "User");
+            return RedirectToAction("All");
         }
 
         /// <summary>
@@ -182,19 +191,21 @@ namespace MusiCom.Areas.Admin.Controllers
         /// </summary>
         /// <param name="Id">Id of the User</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        [HttpPost]
         public async Task<IActionResult> RemoveArtist(Guid Id)
         {
             var user = await userManager.FindByIdAsync(Id.ToString());
 
             if (user == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "There is no such User";
+                return RedirectToAction("All");
             }
 
             if (!(await userManager.IsInRoleAsync(user, "Artist")))
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "User is not an Artist";
+                return RedirectToAction("All");
             }
 
             try
@@ -204,11 +215,11 @@ namespace MusiCom.Areas.Admin.Controllers
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
+                return RedirectToAction("All");
             }
 
-            return RedirectToAction("All", "User");
+            return RedirectToAction("All");
         }
 
         /// <summary>
@@ -216,19 +227,21 @@ namespace MusiCom.Areas.Admin.Controllers
         /// </summary>
         /// <param name="Id">Id of the User</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        [HttpPost]
         public async Task<IActionResult> DeleteUser(Guid Id)
         {
             var user = await userManager.FindByIdAsync(Id.ToString());
 
-            if (user.Id == Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!))
+            if (user.Id == User.Id())
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "The current User cannot be deleted";
+                return RedirectToAction("All");
             }
 
             if (user == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "There is no such User";
+                return RedirectToAction("All");
             }
 
             try
@@ -237,11 +250,11 @@ namespace MusiCom.Areas.Admin.Controllers
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
+                return RedirectToAction("All");
             }
 
-            return RedirectToAction("All", "User");
+            return RedirectToAction("All");
         }
 
         /// <summary>
@@ -249,14 +262,15 @@ namespace MusiCom.Areas.Admin.Controllers
         /// </summary>
         /// <param name="Id">Id of the User</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        [HttpPost]
         public async Task<IActionResult> BringBackUser(Guid Id)
         {
             var user = await userManager.FindByIdAsync(Id.ToString());
 
             if (user == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "There is no such User";
+                return RedirectToAction("All");
             }
 
             try
@@ -265,11 +279,11 @@ namespace MusiCom.Areas.Admin.Controllers
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
+                return RedirectToAction("All");
             }
 
-            return RedirectToAction("All", "User");
+            return RedirectToAction("All");
         }
     }
 }

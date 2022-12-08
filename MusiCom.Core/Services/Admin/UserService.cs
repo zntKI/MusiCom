@@ -14,15 +14,13 @@ namespace MusiCom.Core.Services.Admin
     public class UserService : IUserService
     {
         private readonly IRepository repo;
-        private readonly UserManager<ApplicationUser> userManager;
 
-        public UserService(IRepository _repo, UserManager<ApplicationUser> _userManager)
+        public UserService(IRepository _repo)
         {
             repo = _repo;
-            userManager = _userManager;
         }
 
-        public async Task<UserQueryServiceModel> All(string? type = null, string? searchTerm = null, int currentPage = 1, int usersPerPage = 1)
+        public async Task<UserQueryServiceModel> AllAsync(string? type = null, string? searchTerm = null, int currentPage = 1, int usersPerPage = 1)
         {
             var usersQuery = repo.AllReadonly<ApplicationUser>();
 
@@ -82,10 +80,6 @@ namespace MusiCom.Core.Services.Admin
             };
         }
 
-        /// <summary>
-        /// Marks a User as NotDeleted
-        /// </summary>
-        /// <param name="user">User who is to be marked as NotDeleted</param>
         public async Task BringBackUserAsync(ApplicationUser user)
         {
             user.IsDeleted = false;
@@ -93,10 +87,6 @@ namespace MusiCom.Core.Services.Admin
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Creates Artist
-        /// </summary>
-        /// <param name="user">User who is to be assigned as an Artist</param>
         public async Task CreateArtistAsync(ApplicationUser user)
         {
             var artist = new Artist()
@@ -112,11 +102,6 @@ namespace MusiCom.Core.Services.Admin
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Creates Editor
-        /// </summary>
-        /// <param name="model">Model with data to save passed by the controller</param>
-        /// <param name="user">User who is to be assigned as an Editor</param>
         public async Task CreateEditorAsync(EditorAddViewModel model, ApplicationUser user)
         {
             var editor = new Editor()
@@ -134,10 +119,6 @@ namespace MusiCom.Core.Services.Admin
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Marks a User as Deleted
-        /// </summary>
-        /// <param name="user">User who is to be marked as Deleted</param>
         public async Task DeleteUserAsync(ApplicationUser user)
         {
             user.IsDeleted = true;
@@ -145,31 +126,21 @@ namespace MusiCom.Core.Services.Admin
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Marks the given Artist as Deleted
-        /// </summary>
-        /// <param name="user">The User who is to be unassigned from the Artist Role</param>
         public async Task RemoveArtistAsync(ApplicationUser user)
         {
             var artist = await repo.GetByIdAsync<Artist>(user.ArtistId!);
 
             user.ArtistId = null;
-
             artist.IsDeleted = true;
 
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Marks the given Editor as Deleted
-        /// </summary>
-        /// <param name="user">The User who is to be unassigned from the Editor Role</param>
         public async Task RemoveEditorAsync(ApplicationUser user)
         {
             var editor = await repo.GetByIdAsync<Editor>(user.EditorId!);
 
             user.EditorId = null;
-            
             editor.IsDeleted = true;
 
             await repo.SaveChangesAsync();
