@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using MusiCom.Core.Constants;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.Event;
-using MusiCom.Core.Models.New;
-using MusiCom.Core.Services;
 using MusiCom.Infrastructure.Data.Entities;
 
 namespace MusiCom.Controllers
@@ -36,20 +36,38 @@ namespace MusiCom.Controllers
         {
             var user = await userManager.GetUserAsync(User);
 
-            if (user == null)
+            List<string> list = new List<string>()
             {
-                return BadRequest();
+                "Title", "Image", "Date", "Id", "Genre", "EventPosts", "Description", "ArtistName"
+            };
+            foreach (var field in list)
+            {
+                ModelState.Remove(field);
             }
-
-            //TODO: Fix
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Details", "Event", new { id = Id });
+            }
+            
             try
             {
                 await postService.CreatePostAsync(model.CurrentPost, Id, user.Id, image);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                throw;
+                if (e.Message == "Not an image")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image";
+                }
+                else if (e.Message == "Not the right image format")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image with one of the formats shown";
+                }
+                else if (e.Message == "Image else")
+                {
+                    TempData[MessageConstant.WarningMessage] = "An Error occured";
+                }
+                return RedirectToAction("Details", "Event", new { id = Id });
             }
 
             return RedirectToAction("Details", "Event", new { id = Id });
@@ -66,12 +84,17 @@ namespace MusiCom.Controllers
         {
             try
             {
-                await postService.AddLikeToPost(pId);
+                var post = await postService.GetPostByIdAsync(pId);
+                if (post == null)
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Not found";
+                    return RedirectToAction("Details", "Event", new { id = mId });
+                }
+                await postService.AddLikeToPostAsync(post);
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
             }
 
             return RedirectToAction("Details", "Event", new { id = mId });
@@ -88,12 +111,17 @@ namespace MusiCom.Controllers
         {
             try
             {
-                await postService.AddLikeToPost(pId);
+                var post = await postService.GetPostByIdAsync(pId);
+                if (post == null)
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Not found";
+                    return RedirectToAction("Details", "Event", new { id = mId });
+                }
+                await postService.AddDislikeToPostAsync(post);
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
             }
 
             return RedirectToAction("Details", "New", new { id = mId });

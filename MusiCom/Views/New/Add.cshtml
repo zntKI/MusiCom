@@ -40,17 +40,7 @@
                 <div>
                     <label asp-for="@Model.Tags" class="form-label">Tags</label>
                     <select asp-for="@Model.Tags" asp-items="@Model.TagsAll" multiple multiselect-search="true">
-                        @*@foreach (var tag in Model.TagsAll)
-                        {
-                        <option>@tag.Name</option>
-                        }*@
                     </select>
-                    @*<select asp-for="@Model.Tags" asp-items="@Model.TagsAll" class="custom-select" name="select" multiple multiselect-search="true">
-                        @foreach (var tag in Model.TagsAll)
-                        {
-                            <option>@tag.Name</option>
-                        }
-                    </select>*@
                 </div>
                 <div class="text-center">
                     <button id="add-submit" type="submit" class="btn btn-primary">Create</button>

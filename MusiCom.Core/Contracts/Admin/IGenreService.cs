@@ -18,10 +18,19 @@ namespace MusiCom.Core.Contracts.Admin
         /// Lists all Genres ordered by DateOfCreation
         /// </summary>
         /// <returns>All Genres</returns>
-        Task<IEnumerable<GenreAllViewModel>> GetAllGenres();
+        Task<IEnumerable<GenreAllViewModel>> GetAllGenresAsync();
 
-        Task<IEnumerable<string>> GetAllGenreNames();
+        /// <summary>
+        /// Gets All Genres' Names
+        /// </summary>
+        /// <returns>A Collection of Genre Names</returns>
+        Task<IEnumerable<string>> GetAllGenreNamesAsync();
 
+        /// <summary>
+        /// Gets the Genre with the given Id
+        /// </summary>
+        /// <param name="Id">The Id of a Genre</param>
+        /// <returns>The desired Genre</returns>
         Task<Genre> GetGenreByIdAsync(Guid Id);
 
         /// <summary>
@@ -31,6 +40,10 @@ namespace MusiCom.Core.Contracts.Admin
         /// <param name="model">Model which is passed from the View</param>
         Task EditGenreAsync(Guid id, GenreAllViewModel model);
 
+        /// <summary>
+        /// Marks a given Genre as Deleted
+        /// </summary>
+        /// <param name="id">The Id of the given Genre</param>
         Task DeleteGenreAsync(Guid id);
     }
 }

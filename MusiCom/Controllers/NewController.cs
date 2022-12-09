@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MusiCom.Core.Contracts;
-using MusiCom.Core.Models.New;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using MusiCom.Infrastructure.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using MusiCom.Infrastructure.Data.Entities.News;
-using MusiCom.Core.Models.Comment;
-using MusiCom.Core.Contracts.Admin;
-using Microsoft.AspNetCore.Authorization;
-using MusiCom.Core.Models.Event;
-using static MusiCom.Infrastructure.Data.DataConstraints;
-using MusiCom.Core.Models.Tag;
 using MusiCom.Core.Constants;
+using MusiCom.Core.Contracts;
+using MusiCom.Core.Contracts.Admin;
+using MusiCom.Core.Models.Comment;
+using MusiCom.Core.Models.New;
+using MusiCom.Core.Models.Tag;
+using MusiCom.Infrastructure.Data.Entities;
 
 namespace MusiCom.Controllers
 {
@@ -52,7 +49,7 @@ namespace MusiCom.Controllers
             query.TotalNewsCount = queryResult.TotakNewsCount;
             query.News = queryResult.News;
 
-            var newGenres = await genreService.GetAllGenreNames();
+            var newGenres = await genreService.GetAllGenreNamesAsync();
             query.Genres = newGenres;
             var newTags = await tagService.GetAllTagNamesAsync();
             query.Tags = newTags;
@@ -68,11 +65,11 @@ namespace MusiCom.Controllers
         [Authorize(Roles = "Editor")]
         public async Task<IActionResult> Add()
         {
-            var tags = await tagService.GetAllTags();
+            var tags = await tagService.GetAllTagsAsync();
             
             NewAddViewModel model = new NewAddViewModel()
             {
-                Genres = await genreService.GetAllGenres(),
+                Genres = await genreService.GetAllGenresAsync(),
                 TagsAll = Selects(tags)
             };
 
@@ -83,7 +80,7 @@ namespace MusiCom.Controllers
         /// Checks the model passed by the View and then calls a method from the Service
         /// </summary>
         /// <param name="model">The Model passed by the View</param>
-        /// <param name="TitlePhoto">The TitlePhotoFile passed by the View</param>
+        /// <param name="image">The TitlePhotoFile passed by the View</param>
         /// <returns>Redirects to Action "Index" in HomeController</returns>
         [HttpPost]
         [Authorize(Roles = "Editor")]
@@ -91,30 +88,38 @@ namespace MusiCom.Controllers
         {
             var editor = await userManager.GetUserAsync(User);
 
-            if (editor == null)
-            {
-                return BadRequest();
-            }
-
-            //TODO: Find a better solution
             ModelState.Remove(nameof(model.TitleImage));
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || image == null)
             {
+                model.Genres = await genreService.GetAllGenresAsync();
+                model.TagsAll = Selects(await tagService.GetAllTagsAsync());
                 return View(model);
             }
 
-            //TODO: Fix
             try
             {
                 await newService.CreateNewAsync(editor.Id, model, image);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                throw;
+                if (e.Message == "Not an image")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image";
+                }
+                else if (e.Message == "Not the right image format")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image with one of the formats shown";
+                }
+                else if (e.Message == "Image else")
+                {
+                    TempData[MessageConstant.WarningMessage] = "An Error occured";
+                }
+                model.Genres = await genreService.GetAllGenresAsync();
+                model.TagsAll = Selects(await tagService.GetAllTagsAsync());
+                return View(model);
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("All");
         }
 
         /// <summary>
@@ -122,14 +127,15 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <param name="Id">New Id</param>
         /// <returns>A View with the NewModel</returns>
+        [HttpGet]
         public async Task<IActionResult> Details(Guid Id)
         {
-            New entity = await newService.GetNewByIdAsync(Id);
+            var entity = await newService.GetNewByIdAsync(Id);
 
-            //TODO: Fix
             if (entity == null)
             {
-                return BadRequest();
+                TempData[MessageConstant.WarningMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             NewDetailsViewModel model = new NewDetailsViewModel()
@@ -153,21 +159,23 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <param name="Id">Id of the New</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        [Authorize(Roles = "Artist, Admin")]
+        [HttpPost]
+        [Authorize(Roles = "Editor, Admin")]
         public async Task<IActionResult> Delete(Guid Id)
         {
             var user = await userManager.GetUserAsync(User);
             var neww = await newService.GetNewByIdAsync(Id);
 
-            if (user == null || neww == null)
+            if (neww == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             if (user.Id != neww.EditorId)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Can't delete other Editors's Events";
+                return RedirectToAction("All");
             }
 
             try
@@ -176,8 +184,7 @@ namespace MusiCom.Controllers
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
             }
 
             return RedirectToAction("All");
@@ -188,7 +195,6 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <param name="Id">Id of the New</param>
         /// <returns>View for Editing</returns>
-        /// <exception cref="InvalidOperationException"></exception>
         [HttpGet]
         [Authorize(Roles = "Editor")]
         public async Task<IActionResult> Edit(Guid Id)
@@ -196,15 +202,15 @@ namespace MusiCom.Controllers
             var user = await userManager.GetUserAsync(User);
             var neww = await newService.GetNewByIdAsync(Id);
 
-            if (user == null || neww == null)
+            if (neww == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             if (user.Id != neww.EditorId)
             {
                 TempData[MessageConstant.ErrorMessage] = "You are not allowed to edit other Editor's News";
-
                 return RedirectToAction("All");
             }
 
@@ -214,8 +220,8 @@ namespace MusiCom.Controllers
                 Title = neww.Title,
                 Content = neww.Content,
                 TitleImage = neww.TitleImage,
-                Genres = await genreService.GetAllGenres(),
-                TagsAll = Selects(await tagService.GetAllTags()),
+                Genres = await genreService.GetAllGenresAsync(),
+                TagsAll = Selects(await tagService.GetAllTagsAsync()),
                 EditorId = neww.EditorId,
                 GenreId = neww.GenreId,
             };
@@ -230,7 +236,6 @@ namespace MusiCom.Controllers
         /// <param name="model">Edited Data for the New</param>
         /// <param name="image">New Image if there is such</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
         [HttpPost]
         [Authorize(Roles = "Editor")]
         public async Task<IActionResult> Edit(Guid Id, NewEditViewModel model, IFormFile image)
@@ -245,27 +250,43 @@ namespace MusiCom.Controllers
 
             if (neww == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             if (Id != model.Id)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             try
             {
                 await newService.EditNewAsync(neww, model, image);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                throw;
+                if (e.Message == "Not an image")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image";
+                }
+                else if (e.Message == "Not the right image format")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image with one of the formats shown";
+                }
+                else if (e.Message == "Image else")
+                {
+                    TempData[MessageConstant.WarningMessage] = "An Error occured";
+                }
             }
 
             return RedirectToAction("All");
         }
 
+        /// <summary>
+        /// Selects tags in a List of SelectListItem
+        /// </summary>
+        /// <param name="tags">New's tags</param>
         public List<SelectListItem> Selects(IEnumerable<TagNewAllViewModel> tags)
         {
             var selectList = new List<SelectListItem>();

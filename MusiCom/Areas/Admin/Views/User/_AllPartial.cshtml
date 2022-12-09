@@ -39,11 +39,20 @@
                             <input type="submit" class="btn btn-primary btn-lg" value="Remove Artist" />
                         </form>
                     }
-                    @if (!user.IsDeleted && user.Id != Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!))
+                    @if (!user.IsDeleted)
                     {
-                        <form asp-area="Admin" asp-controller="User" asp-action="DeleteUser" asp-route-id="@user.Id">
-                            <input type="submit" class="btn btn-primary btn-lg" value="Delete" />
-                        </form>
+                        @if (user.Id != Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!))
+                        {
+                            <form asp-area="Admin" asp-controller="User" asp-action="DeleteUser" id="myForm" onsubmit="sureSend(event)" asp-route-id="@user.Id">
+                                <input type="submit" class="btn btn-primary btn-lg" value="Delete" />
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-area="Admin" asp-controller="User" asp-action="DeleteUser" id="myForm" onsubmit="sureSend(event)" asp-route-id="@user.Id">
+                                <input type="submit" class="btn btn-primary btn-lg" disabled value="Delete" />
+                            </form>
+                        }
                     }
                     else
                     {
@@ -56,3 +65,5 @@
         }
     </tbody>
 </table>
+
+<script src="~/js/sure_delete.js"></script>

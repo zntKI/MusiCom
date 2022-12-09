@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MusiCom.Core.Contracts;
-using MusiCom.Core.Models.Event;
 using MusiCom.Core.Models.New;
 using MusiCom.Infrastructure.Data.Common;
-using MusiCom.Infrastructure.Data.Entities.Events;
 using MusiCom.Infrastructure.Data.Entities.News;
-using System.Linq;
-using static MusiCom.Infrastructure.Data.DataConstraints;
 
 namespace MusiCom.Core.Services
 {
@@ -23,12 +19,6 @@ namespace MusiCom.Core.Services
             repo = _repo;
         }
 
-        /// <summary>
-        /// Creates a New and Seeds it to the Database
-        /// </summary>
-        /// <param name="editorId">EditorId passed by the Controller</param>
-        /// <param name="model">ViewModel passed by the Controller</param>
-        /// <param name="image">The ImageFile passed by the Controller</param>
         public async Task CreateNewAsync(Guid editorId, NewAddViewModel model, IFormFile image)
         {
             New neww = new New()
@@ -48,40 +38,12 @@ namespace MusiCom.Core.Services
                 IsDeleted = false
             };
 
-            string type = image.ContentType;
-
-            if (!type.Contains("image"))
-            {
-                throw new InvalidOperationException();
-            }
-
-            string contentType = type.Substring(type.IndexOf('/') + 1, type.Length - type.Substring(0, type.IndexOf('/')).Length - 1);
-
-            if (contentType != "png" && contentType != "jpeg" && contentType != "jpg")
-            {
-                throw new InvalidOperationException("Please import an image in one of the formats shown above!");
-            }
-
-            //TODO: Fix
-            if (image.Length > 0)
-            {
-                using var stream = new MemoryStream();
-                await image.CopyToAsync(stream);
-                neww.TitleImage = stream.ToArray();
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
+            await AddImage(neww, image);
 
             await repo.AddAsync(neww);
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Marks the Given New as Deleted
-        /// </summary>
-        /// <param name="eventt">The New</param>
         public async Task DeleteNewAsync(New neww)
         {
             neww.IsDeleted = true;
@@ -89,12 +51,6 @@ namespace MusiCom.Core.Services
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Edits a given New
-        /// </summary>
-        /// <param name="neww">The New to be Edited</param>
-        /// <param name="model">The Model which contains the New Data for the New</param>
-        /// <param name="image">The new Image file if there is such</param>
         public async Task EditNewAsync(New neww, NewEditViewModel model, IFormFile image)
         {
             neww.Title = model.Title;
@@ -123,11 +79,6 @@ namespace MusiCom.Core.Services
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Gets All Comments attached to the New
-        /// </summary>
-        /// <param name="newId">New Id</param>
-        /// <returns>Collection of Comments</returns>
         public ICollection<NewComment> GetAllCommentsForNew(Guid newId)
         {
             return repo.All<NewComment>()
@@ -137,15 +88,6 @@ namespace MusiCom.Core.Services
                     .ToList();
         }
 
-        /// <summary>
-        /// Gets all News which correspond to the given criteria
-        /// </summary>
-        /// <param name="genre">Genre Name if passed by the View</param>
-        /// <param name="tag">Tag Name if passed by the View</param>
-        /// <param name="searchTerm">Word or Phrase which will be searched either in the New Title or the New's Creator</param>
-        /// <param name="currentPage">The Current Page of all which hold News</param>
-        /// <param name="newsPerPage">The Number of News that could be held in a Single Page</param>
-        /// <returns>Model which will be used for the Visualisation in the View</returns>
         public async Task<NewQueryServiceModel> GetAllNewsAsync(string? genre = null, string? tag = null, string? searchTerm = null, int currentPage = 1, int newsPerPage = 1)
         {
             var newsQuery = repo.AllReadonly<New>()
@@ -200,11 +142,6 @@ namespace MusiCom.Core.Services
             };
         }
 
-        /// <summary>
-        /// Gets all tags which are attached to the given New
-        /// </summary>
-        /// <param name="newId">New Id</param>
-        /// <returns>Collection of Tag</returns>
         public ICollection<Tag> GetAllTagsForNew(Guid newId)
         {
             return repo.All<NewTags>()
@@ -217,52 +154,9 @@ namespace MusiCom.Core.Services
                     }).ToList();
         }
 
-        /// <summary>
-        /// Takes last three News stored in the Database
-        /// </summary>
-        /// <returns>Collection of NewLastThreeViewModel</returns>
-        public IEnumerable<NewAllNewViewModel> GetLastThreeNews()
-        {
-            var news = repo.All<New>()
-                .OrderByDescending(n => n.PostedOn)
-                .Take(3)
-                .Select(n => new NewAllNewViewModel()
-                { 
-                    Id = n.Id,
-                    Title = n.Title,
-                    Image = n.TitleImage
-                });
-
-            return news;
-        }
-
-        /// <summary>
-        /// Gets the New by Id
-        /// </summary>
-        /// <param name="newId">New Id</param>
-        /// <returns>New</returns>
         public async Task<New> GetNewByIdAsync(Guid newId)
         {
             return await repo.GetByIdAsync<New>(newId);
-        }
-
-        /// <summary>
-        /// Takes Remaining News stored in the Database
-        /// </summary>
-        /// <returns>Collection of NewLastThreeViewModel</returns>
-        public IEnumerable<NewAllNewViewModel> GetRemainingNews()
-        {
-            var news = repo.All<New>()
-                .OrderByDescending(n => n.PostedOn)
-                .Skip(3)
-                .Select(n => new NewAllNewViewModel()
-                {
-                    Id = n.Id,
-                    Title = n.Title,
-                    Image = n.TitleImage
-                });
-
-            return news;
         }
 
         /// <summary>
@@ -276,20 +170,18 @@ namespace MusiCom.Core.Services
         {
             string type = image.ContentType;
 
-            //TODO: Fix
             if (!type.Contains("image"))
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Not an image");
             }
 
             string contentType = type.Substring(type.IndexOf('/') + 1, type.Length - type.Substring(0, type.IndexOf('/')).Length - 1);
 
             if (contentType != "png" && contentType != "jpeg" && contentType != "jpg")
             {
-                throw new InvalidOperationException("Please import an image in one of the formats shown above!");
+                throw new InvalidOperationException("Not the right image format");
             }
 
-            //TODO: Fix
             if (image.Length > 0)
             {
                 using var stream = new MemoryStream();
@@ -298,7 +190,7 @@ namespace MusiCom.Core.Services
             }
             else
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Image else");
             }
 
             return neww;

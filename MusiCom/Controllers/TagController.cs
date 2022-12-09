@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MusiCom.Core.Constants;
 using MusiCom.Core.Contracts;
-using MusiCom.Core.Models.Genre;
 using MusiCom.Core.Models.Tag;
-using MusiCom.Core.Services;
 using MusiCom.Infrastructure.Data.Entities.News;
 
 namespace MusiCom.Controllers
@@ -28,7 +27,7 @@ namespace MusiCom.Controllers
         [HttpGet]
         public async Task<IActionResult> All()
         {
-            var tags = await tagService.GetAllTags();
+            var tags = await tagService.GetAllTagsAsync();
 
             return View(tags);
         }
@@ -60,23 +59,23 @@ namespace MusiCom.Controllers
 
             await tagService.CreateTagAsync(model);
 
-            return RedirectToAction("All", "Tag");
+            return RedirectToAction("All");
         }
 
         /// <summary>
         /// Finds the Tag with the given Id and then renders a View
         /// </summary>
-        /// <param name="id">The Id of the Tag which is about to be Edited</param>
+        /// <param name="id">Id of the Tag which is about to be Edited</param>
         /// <returns>A View</returns>
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            Tag tag = await tagService.GetTagByIdAsync(id);
+            var tag = await tagService.GetTagByIdAsync(id);
 
-            //TODO:
             if (tag == null)
             {
-                return BadRequest();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             TagAllViewModel model = new TagAllViewModel()
@@ -91,20 +90,28 @@ namespace MusiCom.Controllers
         /// <summary>
         /// Edits the Tag
         /// </summary>
-        /// <param name="id">The Id of the Tag which is Edited</param>
-        /// <param name="model">The Tag</param>
+        /// <param name="id">Id of the Tag which is Edited</param>
+        /// <param name="model">Tag</param>
         /// <returns>Redirects to All Action</returns>
         [HttpPost]
         public async Task<IActionResult> Edit(Guid id, TagAllViewModel model)
         {
+            var tag = await tagService.GetTagByIdAsync(id);
+
+            if (tag == null)
+            {
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            await tagService.EditTagAsync(id, model);
+            await tagService.EditTagAsync(tag, model);
 
-            return RedirectToAction("All", "Tag");
+            return RedirectToAction("All");
         }
 
         /// <summary>
@@ -112,17 +119,20 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <param name="id">The Id of the given Tag</param>
         /// <returns>Redirects to All Action</returns>
+        [HttpPost]
         public async Task<IActionResult> Remove(Guid id)
         {
-            //TODO:
-            if ((await tagService.GetTagByIdAsync(id)) == null)
+            var tag = await tagService.GetTagByIdAsync(id);
+
+            if (tag == null)
             {
-                return BadRequest();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
-            await tagService.DeleteTagAsync(id);
+            await tagService.DeleteTagAsync(tag);
 
-            return RedirectToAction("All", "Tag");
+            return RedirectToAction("All");
         }
     }
 }

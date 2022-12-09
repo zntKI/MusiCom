@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MusiCom.Core.Models.New
 {
+    /// <summary>
+    /// Contains data for Artist for NewAllViewModel
+    /// </summary>
     public class NewAllEditorViewModel
     {
         public Guid Id { get; set; }

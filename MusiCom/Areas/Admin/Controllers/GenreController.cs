@@ -25,7 +25,7 @@ namespace MusiCom.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> All()
         {
-            var genres = await genreService.GetAllGenres();
+            var genres = await genreService.GetAllGenresAsync();
 
             return View(genres);
         }

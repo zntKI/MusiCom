@@ -31,10 +31,6 @@ namespace MusiCom.Core.Services.Admin
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Marks a given Genre as Deleted
-        /// </summary>
-        /// <param name="id">The Id of the given Genre</param>
         public async Task DeleteGenreAsync(Guid id)
         {
             Genre genre = await GetGenreByIdAsync(id);
@@ -53,11 +49,7 @@ namespace MusiCom.Core.Services.Admin
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Gets All Genres' Names
-        /// </summary>
-        /// <returns>A Collection of Genre Names</returns>
-        public async Task<IEnumerable<string>> GetAllGenreNames()
+        public async Task<IEnumerable<string>> GetAllGenreNamesAsync()
         {
             return await repo.AllReadonly<Genre>()
                 .Where(g => g.IsDeleted == false)
@@ -65,7 +57,7 @@ namespace MusiCom.Core.Services.Admin
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<GenreAllViewModel>> GetAllGenres()
+        public async Task<IEnumerable<GenreAllViewModel>> GetAllGenresAsync()
         {
             var models = await repo.AllReadonly<Genre>()
                 .Where(g => g.IsDeleted == false)
@@ -81,11 +73,6 @@ namespace MusiCom.Core.Services.Admin
             return models;
         }
 
-        /// <summary>
-        /// Gets the Genre with the given Id
-        /// </summary>
-        /// <param name="id">The Id of a Genre</param>
-        /// <returns>The desired Genre</returns>
         public async Task<Genre> GetGenreByIdAsync(Guid id)
         {
             return await repo.GetByIdAsync<Genre>(id);

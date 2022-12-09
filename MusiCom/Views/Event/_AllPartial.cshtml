@@ -40,11 +40,15 @@
                         eventt.Artistt.Id == Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000"))
                         {
                             <a class="btn btn-warning" asp-controller="Event" asp-action="Edit" asp-route-id="@eventt.Id">Edit</a>
-                            <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@eventt.Id">Delete</a>
+                            <form asp-controller="Event" asp-action="Delete" id="myForm" onsubmit="sureSend(event)" asp-route-id="@eventt.Id">
+                                <input type="submit" class="btn btn-danger" value="Delete" />
+                            </form>
                         }
                         else if (User.IsInRole("Admin"))
                         {
-                            <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@eventt.Id">Delete</a>
+                            <form asp-controller="Event" asp-action="Delete" id="myForm" onsubmit="sureSend(event)" asp-route-id="@eventt.Id">
+                                <input type="submit" class="btn btn-danger" value="Delete" />
+                            </form>
                         }
                     </div>
                 </div>
@@ -66,11 +70,15 @@
                        eventt.Artistt.Id == Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000"))
                         {
                             <a class="btn btn-warning" asp-controller="Event" asp-action="Edit" asp-route-id="@eventt.Id">Edit</a>
-                            <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@eventt.Id">Delete</a>
+                            <form asp-controller="Event" asp-action="Delete" id="myForm" onsubmit="sureSend(event)" asp-route-id="@eventt.Id">
+                                <input type="submit" class="btn btn-danger" value="Delete" />
+                            </form>
                         }
                         else if (User.IsInRole("Admin"))
                         {
-                            <a class="btn btn-danger" asp-controller="Event" asp-action="Delete" asp-route-id="@eventt.Id">Delete</a>
+                            <form asp-controller="Event" asp-action="Delete" id="myForm" onsubmit="sureSend(event)" asp-route-id="@eventt.Id">
+                                <input type="submit" class="btn btn-danger" value="Delete" />
+                            </form>
                         }
                     </div>
                 </div>
@@ -93,3 +101,5 @@
         }
     }
 </div>
+
+<script src="~/js/sure_delete.js"></script>

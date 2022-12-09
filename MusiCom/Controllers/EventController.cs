@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MusiCom.Core.Constants;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Event;
 using MusiCom.Infrastructure.Data.Entities;
-using System.Security.Claims;
 
 namespace MusiCom.Controllers
 {
@@ -40,7 +40,7 @@ namespace MusiCom.Controllers
             query.TotalEventsCount = queryResult.TotalEventsCount;
             query.Events = queryResult.Events;
 
-            var eventGenres = await genreService.GetAllGenreNames();
+            var eventGenres = await genreService.GetAllGenreNamesAsync();
             query.Genres = eventGenres;
 
             return View(query);
@@ -56,7 +56,7 @@ namespace MusiCom.Controllers
         {
             EventAddViewModel model = new EventAddViewModel()
             { 
-                Genres = await genreService.GetAllGenres()
+                Genres = await genreService.GetAllGenresAsync()
             };
 
             return View(model);
@@ -74,14 +74,10 @@ namespace MusiCom.Controllers
         {
             var artist = await userManager.GetUserAsync(User);
 
-            if (!User.IsInRole("Artist"))
-            {
-                throw new InvalidOperationException();
-            }
-
             ModelState.Remove("Image");
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || image == null)
             {
+                model.Genres = await genreService.GetAllGenresAsync();
                 return View(model);
             }
 
@@ -89,10 +85,22 @@ namespace MusiCom.Controllers
             {
                 await eventService.CreateEventAsync(model, artist, image);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                throw;
+                if (e.Message == "Not an image")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image";
+                }
+                else if (e.Message == "Not the right image format")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image with one of the formats shown";
+                }
+                else if (e.Message == "Image else")
+                {
+                    TempData[MessageConstant.WarningMessage] = "An Error occured";
+                }
+                model.Genres = await genreService.GetAllGenresAsync();
+                return View(model);
             }
 
             return RedirectToAction("All");
@@ -102,7 +110,6 @@ namespace MusiCom.Controllers
         /// Renders the Details Page for an Event
         /// </summary>
         /// <param name="Id">Id of the Given Event</param>
-        /// <returns>A View</returns>
         [HttpGet]
         public async Task<IActionResult> Details(Guid Id)
         {
@@ -117,20 +124,23 @@ namespace MusiCom.Controllers
         /// <param name="Id">Id of the Event</param>
         /// <returns>Redirects to Action All</returns>
         /// <exception cref="InvalidOperationException"></exception>
+        [HttpPost]
         [Authorize(Roles = "Artist, Admin")]
         public async Task<IActionResult> Delete(Guid Id)
         {
             var user = await userManager.GetUserAsync(User);
             var eventt = await eventService.GetEventByIdAsync(Id);
 
-            if (user == null || eventt == null)
+            if (eventt == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             if (user.Id != eventt.ArtistId)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Can't delete other Artist's Events";
+                return RedirectToAction("All");
             }
 
             try
@@ -139,8 +149,7 @@ namespace MusiCom.Controllers
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[MessageConstant.WarningMessage] = "An Error occured";
             }
 
             return RedirectToAction("All");
@@ -151,7 +160,6 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <param name="Id">Id of the Event</param>
         /// <returns>View for Editing</returns>
-        /// <exception cref="InvalidOperationException"></exception>
         [HttpGet]
         [Authorize(Roles = "Artist")]
         public async Task<IActionResult> Edit(Guid Id)
@@ -159,14 +167,16 @@ namespace MusiCom.Controllers
             var user = await userManager.GetUserAsync(User);
             var eventt = await eventService.GetEventByIdAsync(Id);
 
-            if (user == null || eventt == null)
+            if (eventt == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             if (user.Id != eventt.ArtistId)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Can't edit other Artist's Events";
+                return RedirectToAction("All");
             }
 
             var model = new EventEditViewModel()
@@ -176,7 +186,7 @@ namespace MusiCom.Controllers
                 Description = eventt.Description,
                 Image = eventt.Image,
                 Date = eventt.Date,
-                Genres = await genreService.GetAllGenres(),
+                Genres = await genreService.GetAllGenresAsync(),
                 ArtistId = eventt.ArtistId,
                 GenreId = eventt.GenreId
             };
@@ -189,9 +199,8 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <param name="Id">Id of the Event</param>
         /// <param name="model">Edited Data for the Event</param>
-        /// <param name="image">New Image if there is such</param>
+        /// <param name="image">New's Image if there is such</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
         [HttpPost]
         [Authorize(Roles = "Artist")]
         public async Task<IActionResult> Edit(Guid Id, EventEditViewModel model, IFormFile image)
@@ -206,22 +215,34 @@ namespace MusiCom.Controllers
 
             if (eventt == null)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             if (Id != model.Id)
             {
-                throw new InvalidOperationException();
+                TempData[MessageConstant.ErrorMessage] = "Not found";
+                return RedirectToAction("All");
             }
 
             try
             {
                 await eventService.EditEventAsync(eventt, model, image);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                throw;
+                if (e.Message == "Not an image")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image";
+                }
+                else if (e.Message == "Not the right image format")
+                {
+                    TempData[MessageConstant.ErrorMessage] = "Please insert an image with one of the formats shown";
+                }
+                else if (e.Message == "Image else")
+                {
+                    TempData[MessageConstant.WarningMessage] = "An Error occured";
+                }
             }
 
             return RedirectToAction("All");

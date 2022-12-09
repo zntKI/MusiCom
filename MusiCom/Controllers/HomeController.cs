@@ -9,13 +9,6 @@ namespace MusiCom.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly INewServices newService;
-
-        public HomeController(INewServices _newServices)
-        {
-            newService = _newServices;
-        }
-
         /// <summary>
         /// Presents the all News
         /// </summary>
@@ -28,11 +21,6 @@ namespace MusiCom.Controllers
             }
 
             return RedirectToAction("All", "New");
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -19,10 +19,6 @@ namespace MusiCom.Core.Services
             repo = _repo;
         }
 
-        /// <summary>
-        /// Creates a Tag
-        /// </summary>
-        /// <param name="model">model passed by the controller</param>s
         public async Task CreateTagAsync(TagViewModel model)
         {
             var tag = new Tag()
@@ -36,27 +32,15 @@ namespace MusiCom.Core.Services
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Marks a given Tag as Deleted
-        /// </summary>
-        /// <param name="id">The Id of the given Tag</param>
-        public async Task DeleteTagAsync(Guid id)
+        public async Task DeleteTagAsync(Tag tag)
         {
-            Tag tag = await GetTagByIdAsync(id);
             tag.IsDeleted = true;
 
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Edits a Tag with a given Id
-        /// </summary>
-        /// <param name="id">Id of the Tag</param>
-        /// <param name="model">Model which is passed from the View</param>
-        public async Task EditTagAsync(Guid id, TagAllViewModel model)
+        public async Task EditTagAsync(Tag tag, TagAllViewModel model)
         {
-            var tag = await GetTagByIdAsync(id);
-
             tag.Name = model.Name;
             tag.DateOfCreation = DateTime.Now;
 
@@ -71,14 +55,9 @@ namespace MusiCom.Core.Services
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Lists all Tags ordered by DateOfCreation
-        /// </summary>
-        /// <returns>All Tags</returns>
-        //TODO:
-        public async Task<IEnumerable<TagNewAllViewModel>> GetAllTags()
+        public async Task<IEnumerable<TagNewAllViewModel>> GetAllTagsAsync()
         {
-            var models = await repo.All<Tag>()
+            return await repo.All<Tag>()
                 .Where(t => t.IsDeleted == false)
                 .Select(t => new TagNewAllViewModel()
                 {
@@ -89,15 +68,8 @@ namespace MusiCom.Core.Services
                 })
                 .OrderByDescending(t => t.DateOfCreation)
                 .ToListAsync();
-
-            return models;
         }
 
-        /// <summary>
-        /// Gets the Tag with the given Id
-        /// </summary>
-        /// <param name="id">The Id of a Tag</param>
-        /// <returns>The desired Tag</returns>
         public async Task<Tag> GetTagByIdAsync(Guid id)
         {
             return await repo.GetByIdAsync<Tag>(id);

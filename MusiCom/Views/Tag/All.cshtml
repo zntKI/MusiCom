@@ -33,9 +33,9 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="text-center">
-                                        <a class="btn btn-danger" asp-controller="Tag" asp-action="Remove" asp-route-id="@tag.Id">Remove</a>
-                                    </div>
+                                    <form class="text-center" asp-controller="Tag" asp-action="Remove" id="myForm" onsubmit="sureSend(event)" asp-route-id="@tag.Id">
+                                        <input type="submit" class="btn btn-danger" value="Delete" />
+                                    </form>
                                 </td>
                         </tr>
                     }
@@ -44,3 +44,5 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/sure_delete.js"></script>

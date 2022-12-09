@@ -18,13 +18,6 @@ namespace MusiCom.Core.Services
             repo = _repo;
         }
 
-        /// <summary>
-        /// Seeds the given Event in the Database
-        /// </summary>
-        /// <param name="model">Model passed by the View</param>
-        /// <param name="artistId">Artist who have created the Event</param>
-        /// <param name="image">Image File passed by the View</param>
-        /// <exception cref="InvalidOperationException">Throws if something goes wrong</exception>
         public async Task CreateEventAsync(EventAddViewModel model, ApplicationUser artist, IFormFile image)
         {
             Event eventt = new Event()
@@ -45,10 +38,6 @@ namespace MusiCom.Core.Services
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Marks the Given Event as Deleted
-        /// </summary>
-        /// <param name="eventt">The Event</param>
         public async Task DeleteEventAsync(Event eventt)
         {
             eventt.IsDeleted = true;
@@ -56,12 +45,6 @@ namespace MusiCom.Core.Services
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Edits a given Event
-        /// </summary>
-        /// <param name="eventt">The Event to be Edited</param>
-        /// <param name="model">The Model which contains the New Data for the Event</param>
-        /// <param name="image">The new Image file if there is such</param>
         public async Task EditEventAsync(Event eventt, EventEditViewModel model, IFormFile image)
         {
             eventt.Title = model.Title;
@@ -81,14 +64,6 @@ namespace MusiCom.Core.Services
             await repo.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Gets all Events which correspond to the given criteria
-        /// </summary>
-        /// <param name="genre">Genre Name if passed by the View</param>
-        /// <param name="searchTerm">Word or Phrase which will be searched either in the Event Title or the Event's Creator</param>
-        /// <param name="currentPage">The Current Page of all which hold Events</param>
-        /// <param name="eventsPerPage">The Number of Events that could be held in a Single Page</param>
-        /// <returns>Model which will be used for the Visualisation in the View</returns>
         public async Task<EventQueryServiceModel> GetAllEventsAsync(string? genre = null, string? searchTerm = null, int currentPage = 1, int eventsPerPage = 1)
         {
             var eventsQuery = repo.AllReadonly<Event>()
@@ -148,26 +123,14 @@ namespace MusiCom.Core.Services
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Gets the Event with the given Id from the Database
-        /// </summary>
-        /// <param name="id">The Id of the Event</param>
-        /// <returns></returns>
         public async Task<Event> GetEventByIdAsync(Guid id)
         {
             return await repo.GetByIdAsync<Event>(id);
         }
 
-        /// <summary>
-        /// Gets the wanted Event
-        /// </summary>
-        /// <param name="id">Event Id</param>
-        /// <returns>EvemtDetailsViewModel</returns>
         public async Task<EventDetailsViewModel> GetEventByIdForDetailsAsync(Guid id)
         {
-            //TODO: Fix
             var entity = await repo.GetByIdAsync<Event>(id);
-            var genre = await repo.GetByIdAsync<Genre>(entity.GenreId);
             var artist = await repo.GetByIdAsync<ApplicationUser>(entity.ArtistId);
 
             EventDetailsViewModel model = new EventDetailsViewModel()
@@ -178,7 +141,7 @@ namespace MusiCom.Core.Services
                 Description = entity.Description,
                 Date = entity.Date,
                 ArtistName = artist.UserName,
-                Genre = genre,
+                Genre = await repo.GetByIdAsync<Genre>(entity.GenreId),
                 EventPosts = await GetAllPostsForEventAsync(entity.Id),
             };
 
@@ -191,25 +154,23 @@ namespace MusiCom.Core.Services
         /// <param name="eventt">The Event</param>
         /// <param name="image">The Image</param>
         /// <returns>The modified Event</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="InvalidOperationException">passed to the controller</exception>
         public async Task<Event> AddImage(Event eventt, IFormFile image)
         {
             string type = image.ContentType;
 
-            //TODO: Fix
             if (!type.Contains("image"))
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Not an image");
             }
 
             string contentType = type.Substring(type.IndexOf('/') + 1, type.Length - type.Substring(0, type.IndexOf('/')).Length - 1);
 
             if (contentType != "png" && contentType != "jpeg" && contentType != "jpg")
             {
-                throw new InvalidOperationException("Please import an image in one of the formats shown above!");
+                throw new InvalidOperationException("Not the right image format");
             }
 
-            //TODO: Fix
             if (image.Length > 0)
             {
                 using var stream = new MemoryStream();
@@ -218,7 +179,7 @@ namespace MusiCom.Core.Services
             }
             else
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Image else");
             }
 
             return eventt;
