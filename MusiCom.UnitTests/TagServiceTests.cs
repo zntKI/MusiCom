@@ -114,7 +114,7 @@ namespace MusiCom.UnitTests
         /// Asserts whether the method gets the Tag Names
         /// </summary>
         [Test]
-        public async Task TestGetAllTagNamesAsync()
+        public async Task TestGetAllTagNamesAsyncInMemory()
         {
             await repo.AddRangeAsync(new List<Tag>()
             {
@@ -138,7 +138,7 @@ namespace MusiCom.UnitTests
         /// Asserts wheter the method Edits a Tag correctly by comparing TagName
         /// </summary>
         [Test]
-        public async Task TestEditTagAsync()
+        public async Task TestEditTagAsyncInMemory()
         {
             await repo.AddRangeAsync(new List<Tag>()
             {
@@ -166,7 +166,7 @@ namespace MusiCom.UnitTests
         /// Asserts that the method Deletes the Tag successfully
         /// </summary>
         [Test]
-        public async Task TestDeleteTagAsync()
+        public async Task TestDeleteTagAsyncInMemory()
         {
             await repo.AddRangeAsync(new List<Tag>()
             {
@@ -188,7 +188,7 @@ namespace MusiCom.UnitTests
         /// Asserts that the method Creates Tag successfully
         /// </summary>
         [Test]
-        public async Task TestCreateTagAsync()
+        public async Task TestCreateTagAsyncInMemory()
         {
             await repo.AddRangeAsync(new List<Tag>()
             {

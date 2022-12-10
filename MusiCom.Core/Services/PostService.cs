@@ -1,17 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MusiCom.Core.Contracts;
-using MusiCom.Core.Models.Comment;
 using MusiCom.Core.Models.Post;
 using MusiCom.Infrastructure.Data.Common;
 using MusiCom.Infrastructure.Data.Entities.Events;
-using MusiCom.Infrastructure.Data.Entities.News;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static MusiCom.Infrastructure.Data.DataConstraints;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MusiCom.Core.Services
 {

@@ -115,7 +115,7 @@ namespace MusiCom.UnitTests
         /// Asserts whether the method gets the Genre Names
         /// </summary>
         [Test]
-        public async Task TestGetAllGenreNamesAsync()
+        public async Task TestGetAllGenreNamesAsyncInMemory()
         {
             await repo.AddRangeAsync(new List<Genre>()
             {
@@ -139,7 +139,7 @@ namespace MusiCom.UnitTests
         /// Asserts wheter the method Edits a Genre correctly by comparing GenreName
         /// </summary>
         [Test]
-        public async Task TestEditGenreAsync()
+        public async Task TestEditGenreAsyncInMemory()
         {
             await repo.AddRangeAsync(new List<Genre>()
             {
@@ -166,7 +166,7 @@ namespace MusiCom.UnitTests
         /// Asserts that the method Deletes the Genre successfully
         /// </summary>
         [Test]
-        public async Task TestDeleteGenreAsync()
+        public async Task TestDeleteGenreAsyncInMemory()
         {
             await repo.AddRangeAsync(new List<Genre>()
             {
@@ -188,7 +188,7 @@ namespace MusiCom.UnitTests
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task TestCreateGenreAsync()
+        public async Task TestCreateGenreAsyncInMemory()
         {
             await repo.AddRangeAsync(new List<Genre>()
             {
