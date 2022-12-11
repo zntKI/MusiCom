@@ -255,7 +255,7 @@ namespace MusiCom.UnitTests
         /// Asserts that the method gets all Users who are Editors and Artists successfully
         /// </summary>
         [Test]
-        public async Task TestAllAsyncAsArtistsAndEditorsInMemory()
+        public async Task TestAllAsyncAsArtistAndEditorInMemory()
         {
             var user = new ApplicationUser() { Id = new Guid("b08b2e6e-c22a-4306-ae57-5325a7d5854f"), UserName = "1", Email = "1", IsDeleted = false, ArtistId = new Guid("b08b2e6e-c22a-4306-ae57-5325a7d5854f"), EditorId = new Guid("3842e541-d0cd-4cb6-9827-3ba61ca11fd6") };
             await repo.AddRangeAsync(new List<ApplicationUser>()
@@ -265,7 +265,7 @@ namespace MusiCom.UnitTests
             });
             await repo.SaveChangesAsync();
 
-            var users = await userService.AllAsync(type: "Editors and Artists", usersPerPage: 2);
+            var users = await userService.AllAsync(type: "Editor and Artist", usersPerPage: 2);
 
             Assert.That(users.TotalUsersCount, Is.EqualTo(1));
         }

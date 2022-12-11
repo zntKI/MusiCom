@@ -4,6 +4,7 @@ using MusiCom.Core.Models.Genre;
 using MusiCom.Core.Services.Admin;
 using MusiCom.Infrastructure.Data;
 using MusiCom.Infrastructure.Data.Common;
+using MusiCom.Infrastructure.Data.Entities;
 using MusiCom.Infrastructure.Data.Entities.Events;
 using MusiCom.Infrastructure.Data.Entities.News;
 
@@ -174,13 +175,57 @@ namespace MusiCom.UnitTests
                 new Genre() { Id = new Guid("89fedf3f-282c-43db-bfec-0ec8004cb3eb"), Name = "Metal", IsDeleted = false, DateOfCreation = DateTime.Now, Events = new List<Event>(), News = new List<New>() },
                 new Genre() { Id = new Guid("68576c9f-be19-42eb-8b8b-f44205396b7f"), Name = "Pop", IsDeleted = false, DateOfCreation = DateTime.Now, Events = new List<Event>(), News = new List<New>() }
             });
+            await repo.AddRangeAsync(new List<New>()
+            {
+                new New() { Id = new Guid("7e2ec5de-ad4d-4900-925c-4147cbdf9569"),
+                    Title = "", TitleImage = new byte[1000],
+                    Content = "",
+                    GenreId = new Guid("7e2ec5de-ad4d-4900-925c-4147cbdf9569"),
+                    EditorId = new Guid("68576c9f-be19-42eb-8b8b-f44205396b7f"),
+                    PostedOn = DateTime.Now,
+                    IsDeleted = false
+                },
+                new New() { Id = new Guid("5872f3f2-4c44-476d-a67b-59a1bcda8b1f"),
+                    Title = "", TitleImage = new byte[1000],
+                    Content = "",
+                    GenreId = new Guid("7e2ec5de-ad4d-4900-925c-4147cbdf9569"),
+                    EditorId = new Guid("68576c9f-be19-42eb-8b8b-f44205396b7f"),
+                    PostedOn = DateTime.Now,
+                    IsDeleted = false
+                }
+            });
+            await repo.AddRangeAsync(new List<Event>()
+            {
+                new Event() { Id = new Guid("7e2ec5de-ad4d-4900-925c-4147cbdf9569"),
+                    Title = "", Image = new byte[1000],
+                    Description = "",
+                    GenreId = new Guid("7e2ec5de-ad4d-4900-925c-4147cbdf9569"),
+                    ArtistId = new Guid("68576c9f-be19-42eb-8b8b-f44205396b7f"),
+                    Date = DateTime.Now,
+                    DateOfCreation = DateTime.Now,
+                    IsDeleted = false
+                },
+                new Event() { Id = new Guid("5872f3f2-4c44-476d-a67b-59a1bcda8b1f"),
+                    Title = "", Image = new byte[1000],
+                    Description = "",
+                    GenreId = new Guid("7e2ec5de-ad4d-4900-925c-4147cbdf9569"),
+                    ArtistId = new Guid("68576c9f-be19-42eb-8b8b-f44205396b7f"),
+                    Date = DateTime.Now,
+                    DateOfCreation = DateTime.Now,
+                    IsDeleted = false
+                }
+            });
             await repo.SaveChangesAsync();
 
-            await genreService.DeleteGenreAsync(new Guid("68576c9f-be19-42eb-8b8b-f44205396b7f"));
+            await genreService.DeleteGenreAsync(new Guid("7e2ec5de-ad4d-4900-925c-4147cbdf9569"));
 
             var genres = await genreService.GetAllGenresAsync();
+            var news = repo.All<New>().Where(n => n.IsDeleted == true);
+            var events = repo.All<Event>().Where(n => n.IsDeleted == true);
 
             Assert.That(genres.Count(), Is.EqualTo(2));
+            Assert.That(news.Count(), Is.EqualTo(2));
+            Assert.That(events.Count(), Is.EqualTo(2));
         }
 
         /// <summary>

@@ -116,9 +116,9 @@ namespace MusiCom.Core.Services
             }
 
             var news = await newsQuery
+                .OrderByDescending(e => e.PostedOn)
                 .Skip((currentPage - 1) * newsPerPage)
                 .Take(newsPerPage)
-                .OrderByDescending(e => e.PostedOn)
                 .Include(e => e.Editor)
                 .Select(e => new NewAllNewViewModel
                 {

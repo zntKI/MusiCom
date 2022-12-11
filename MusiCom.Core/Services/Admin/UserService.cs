@@ -41,7 +41,7 @@ namespace MusiCom.Core.Services.Admin
                     usersQuery = usersQuery
                         .Where(u => u.ArtistId != null && u.EditorId == null);
                 }
-                else if (type == "Editors and Artists")
+                else if (type == "Editor and Artist")
                 {
                     usersQuery = usersQuery
                         .Where(u => u.ArtistId != null && u.EditorId != null);

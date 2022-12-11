@@ -85,6 +85,7 @@ namespace MusiCom.Core.Services
             }
 
             var events = await eventsQuery
+                .OrderBy(e => e.Date)
                 .Skip((currentPage - 1) * eventsPerPage)
                 .Take(eventsPerPage)
                 .Select(e => new EventAllViewModel
@@ -100,7 +101,6 @@ namespace MusiCom.Core.Services
                         ArtistName = e.Artist.UserName
                     }
                 })
-                .OrderBy(e => e.Date)
                 .ToListAsync();
 
             var totalEvents = await eventsQuery.CountAsync();

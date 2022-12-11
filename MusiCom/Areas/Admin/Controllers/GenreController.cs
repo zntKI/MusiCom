@@ -123,7 +123,7 @@ namespace MusiCom.Areas.Admin.Controllers
 
             await genreService.DeleteGenreAsync(id);
 
-            TempData[MessageConstant.SuccessMessage] = "Successfully added Genre";
+            TempData[MessageConstant.SuccessMessage] = "Successfully removed Genre";
 
             return RedirectToAction("All");
         }

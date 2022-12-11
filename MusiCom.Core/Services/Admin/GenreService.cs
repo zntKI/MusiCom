@@ -2,6 +2,7 @@
 using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Genre;
 using MusiCom.Infrastructure.Data.Common;
+using MusiCom.Infrastructure.Data.Entities.Events;
 using MusiCom.Infrastructure.Data.Entities.News;
 
 namespace MusiCom.Core.Services.Admin
@@ -35,6 +36,18 @@ namespace MusiCom.Core.Services.Admin
         {
             Genre genre = await GetGenreByIdAsync(id);
             genre.IsDeleted = true;
+
+            var news = await repo.All<New>().Where(e => !e.IsDeleted && e.GenreId == id).ToListAsync();
+            foreach (var neww in news)
+            {
+                neww.IsDeleted = true;
+            }
+
+            var events = await repo.All<Event>().Where(e => !e.IsDeleted && e.GenreId == id).ToListAsync();
+            foreach (var eventt in events)
+            {
+                eventt.IsDeleted = true;
+            }
 
             await repo.SaveChangesAsync();
         }
