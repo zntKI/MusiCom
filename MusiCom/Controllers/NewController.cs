@@ -18,11 +18,11 @@ namespace MusiCom.Controllers
     public class NewController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly INewServices newService;
+        private readonly INewService newService;
         private readonly IGenreService genreService;
         private readonly ITagService tagService;
 
-        public NewController(INewServices _newService, IGenreService _genreService,
+        public NewController(INewService _newService, IGenreService _genreService,
                              ITagService _tagService, UserManager<ApplicationUser> _userManager)
         {
             newService = _newService;

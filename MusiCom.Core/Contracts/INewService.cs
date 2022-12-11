@@ -10,7 +10,7 @@ namespace MusiCom.Core.Contracts
     /// <summary>
     /// Interface for GenreService
     /// </summary>
-    public interface INewServices
+    public interface INewService
     {
         /// <summary>
         /// Gets all News which correspond to the given criteria

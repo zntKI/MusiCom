@@ -10,7 +10,7 @@ namespace MusiCom.Core.Services
     /// <summary>
     /// Contains the logic for Genre functionalities
     /// </summary>
-    public class NewService : INewServices
+    public class NewService : INewService
     {
         private readonly IRepository repo;
 

@@ -1,18 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using MusiCom.Core.Contracts;
-using MusiCom.Core.Services;
-using MusiCom.Infrastructure.Data.Common;
-using MusiCom.Infrastructure.Data.Entities.News;
-using MusiCom.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MusiCom.Infrastructure.Data.Entities.Events;
-using MusiCom.Core.Models.Comment;
 using MusiCom.Core.Models.Post;
-using Microsoft.AspNetCore.Http;
+using MusiCom.Core.Services;
+using MusiCom.Infrastructure.Data;
+using MusiCom.Infrastructure.Data.Common;
+using MusiCom.Infrastructure.Data.Entities.Events;
 
 namespace MusiCom.UnitTests
 {

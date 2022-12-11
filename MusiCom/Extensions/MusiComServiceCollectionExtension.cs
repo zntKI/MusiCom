@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<IGenreService, GenreService>();
             services.AddScoped<ITagService, TagService>();
-            services.AddScoped<INewServices, NewService>();
+            services.AddScoped<INewService, NewService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IPostService, PostService>();
