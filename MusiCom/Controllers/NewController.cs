@@ -88,8 +88,15 @@ namespace MusiCom.Controllers
         {
             var editor = await userManager.GetUserAsync(User);
 
+            if (image == null)
+            {
+                model.Genres = await genreService.GetAllGenresAsync();
+                model.TagsAll = Selects(await tagService.GetAllTagsAsync());
+                return View(model);
+            }
+
             ModelState.Remove(nameof(model.TitleImage));
-            if (!ModelState.IsValid || image == null)
+            if (!ModelState.IsValid)
             {
                 model.Genres = await genreService.GetAllGenresAsync();
                 model.TagsAll = Selects(await tagService.GetAllTagsAsync());

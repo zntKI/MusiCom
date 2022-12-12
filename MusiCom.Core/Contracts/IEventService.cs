@@ -39,9 +39,9 @@ namespace MusiCom.Core.Contracts
         /// <summary>
         /// Gets the wanted Event
         /// </summary>
-        /// <param name="id">Event Id</param>
+        /// <param name="entity">Event</param>
         /// <returns>EvemtDetailsViewModel</returns>
-        Task<EventDetailsViewModel> GetEventByIdForDetailsAsync(Guid id);
+        Task<EventDetailsViewModel> GetEventByIdForDetailsAsync(Event entity);
 
         Task<IEnumerable<EventPost>> GetAllPostsForEventAsync(Guid id);
 

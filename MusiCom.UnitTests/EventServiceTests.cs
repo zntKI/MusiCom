@@ -181,9 +181,8 @@ namespace MusiCom.UnitTests
         [Test]
         public async Task TestGetEventByIdForDetailsAsyncInMemory()
         {
-            await repo.SaveChangesAsync();
-
-            var model = await eventService.GetEventByIdForDetailsAsync(new Guid("5872f3f2-4c44-476d-a67b-59a1bcda8b1f"));
+            var eventt = await eventService.GetEventByIdAsync(new Guid("5872f3f2-4c44-476d-a67b-59a1bcda8b1f"));
+            var model = await eventService.GetEventByIdForDetailsAsync(eventt);
 
             Assert.That(model.Genre.Id, Is.EqualTo(new Guid("7e2ec5de-ad4d-4900-925c-4147cbdf9569")));
         }

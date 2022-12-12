@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Ganss.Xss;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -18,11 +19,13 @@ namespace MusiCom.Controllers
     {
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly UserManager<ApplicationUser> userManager;
+        private HtmlSanitizer sanitizer;
 
         public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
+            sanitizer = new HtmlSanitizer();
         }
 
         /// <summary>
@@ -59,10 +62,10 @@ namespace MusiCom.Controllers
 
             var user = new ApplicationUser
             {
-                FirstName= model.FirstName,
-                LastName= model.LastName,
-                UserName = model.UserName,
-                Email = model.Email
+                FirstName= sanitizer.Sanitize(model.FirstName),
+                LastName= sanitizer.Sanitize(model.LastName),
+                UserName = sanitizer.Sanitize(model.UserName),
+                Email = sanitizer.Sanitize(model.Email)
             };
 
             var result = await userManager.CreateAsync(user, model.Password);

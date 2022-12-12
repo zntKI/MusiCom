@@ -1,4 +1,5 @@
-﻿using MusiCom.Core.Contracts;
+﻿using Ganss.Xss;
+using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.Comment;
 using MusiCom.Infrastructure.Data.Common;
 using MusiCom.Infrastructure.Data.Entities.News;
@@ -8,10 +9,12 @@ namespace MusiCom.Core.Services
     public class CommentService : ICommentService
     {
         private readonly IRepository repo;
+        private HtmlSanitizer sanitizer;
 
         public CommentService(IRepository _repo)
         {
             repo = _repo;
+            sanitizer = new HtmlSanitizer();
         }
 
         public async Task AddDislikeToCommentAsync(NewComment comment)
@@ -32,7 +35,7 @@ namespace MusiCom.Core.Services
         {
             NewComment comment = new NewComment()
             {
-                Content = model.Content,
+                Content = sanitizer.Sanitize(model.Content),
                 DateOfPost = DateTime.Now,
                 NumberOfLikes = 0,
                 NumberOfDislikes = 0,

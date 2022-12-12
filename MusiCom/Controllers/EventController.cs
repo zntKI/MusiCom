@@ -72,14 +72,20 @@ namespace MusiCom.Controllers
         [Authorize(Roles = "Artist")]
         public async Task<IActionResult> Add(EventAddViewModel model, IFormFile image)
         {
-            var artist = await userManager.GetUserAsync(User);
-
-            ModelState.Remove("Image");
-            if (!ModelState.IsValid || image == null)
+            if (image == null)
             {
                 model.Genres = await genreService.GetAllGenresAsync();
                 return View(model);
             }
+
+            ModelState.Remove("Image");
+            if (!ModelState.IsValid)
+            {
+                model.Genres = await genreService.GetAllGenresAsync();
+                return View(model);
+            }
+
+            var artist = await userManager.GetUserAsync(User);
 
             try
             {
@@ -113,7 +119,13 @@ namespace MusiCom.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid Id)
         {
-            var eventt = await eventService.GetEventByIdForDetailsAsync(Id);
+            var ev = await eventService.GetEventByIdAsync(Id);
+            if (ev == null)
+            {
+                TempData[MessageConstant.ErrorMessage] = "Not found!";
+                return RedirectToAction("All");
+            }
+            var eventt = await eventService.GetEventByIdForDetailsAsync(ev);
 
             return View(eventt);
         }
@@ -123,7 +135,6 @@ namespace MusiCom.Controllers
         /// </summary>
         /// <param name="Id">Id of the Event</param>
         /// <returns>Redirects to Action All</returns>
-        /// <exception cref="InvalidOperationException"></exception>
         [HttpPost]
         [Authorize(Roles = "Artist, Admin")]
         public async Task<IActionResult> Delete(Guid Id)
@@ -169,7 +180,7 @@ namespace MusiCom.Controllers
 
             if (eventt == null)
             {
-                TempData[MessageConstant.ErrorMessage] = "Not found";
+                TempData[MessageConstant.ErrorMessage] = "Not found!";
                 return RedirectToAction("All");
             }
 
@@ -215,13 +226,13 @@ namespace MusiCom.Controllers
 
             if (eventt == null)
             {
-                TempData[MessageConstant.ErrorMessage] = "Not found";
+                TempData[MessageConstant.ErrorMessage] = "Not found!";
                 return RedirectToAction("All");
             }
 
             if (Id != model.Id)
             {
-                TempData[MessageConstant.ErrorMessage] = "Not found";
+                TempData[MessageConstant.ErrorMessage] = "Not found!";
                 return RedirectToAction("All");
             }
 

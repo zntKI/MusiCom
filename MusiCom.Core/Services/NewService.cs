@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Ganss.Xss;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.New;
@@ -13,18 +14,20 @@ namespace MusiCom.Core.Services
     public class NewService : INewService
     {
         private readonly IRepository repo;
+        private HtmlSanitizer sanitizer;
 
         public NewService(IRepository _repo)
         {
             repo = _repo;
+            sanitizer = new HtmlSanitizer();
         }
 
         public async Task CreateNewAsync(Guid editorId, NewAddViewModel model, IFormFile image)
         {
             New neww = new New()
             {
-                Title = model.Title,
-                Content = model.Content,
+                Title = sanitizer.Sanitize(model.Title),
+                Content = sanitizer.Sanitize(model.Content),
                 Tags = model.Tags
                     .Select(id => new NewTags()
                     { 
@@ -53,23 +56,9 @@ namespace MusiCom.Core.Services
 
         public async Task EditNewAsync(New neww, NewEditViewModel model, IFormFile image)
         {
-            neww.Title = model.Title;
-            neww.Content = model.Content;
+            neww.Title = sanitizer.Sanitize(model.Title);
+            neww.Content = sanitizer.Sanitize(model.Content);
             neww.GenreId = model.GenreId;
-
-            //foreach (var tag in model.Tags)
-            //{
-            //    if (!neww.Tags.Any(et => et.TagId == tag))
-            //    {
-            //        neww.Tags = model.Tags
-            //        .Select(id => new NewTags()
-            //        {
-            //            TagId = id,
-            //            DateOfCreation = DateTime.Now,
-            //            IsDeleted = false
-            //        }).ToList();
-            //    }
-            //}
 
             if (image != null)
             {

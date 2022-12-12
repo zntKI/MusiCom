@@ -29,6 +29,16 @@ namespace MusiCom.Controllers
         [Authorize]
         public async Task<IActionResult> Create(NewDetailsViewModel model, Guid Id)
         {
+            List<string> props = new List<string>() { "Id", "Title", "TitleImage", "Content", "Genre", "Editor", "Tags", "NewComments" };
+            foreach (var item in props)
+            {
+                ModelState.Remove(item);
+            }
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Details", "New", new { id = Id });
+            }
+
             var editor = await userManager.GetUserAsync(User);
 
             try
@@ -48,7 +58,7 @@ namespace MusiCom.Controllers
         /// Adds a Like to the Comment
         /// </summary>
         /// <param name="cId">Comment's Id</param>
-        /// <param name="mId">New's Id</param>
+        /// <param name="nId">New's Id</param>
         /// <returns>Redirects to Details Action in New Controller</returns>
         [HttpGet]
         public async Task<IActionResult> AddLike(Guid cId, Guid nId)
@@ -78,7 +88,7 @@ namespace MusiCom.Controllers
         /// Adds a Dislike to the Comment
         /// </summary>
         /// <param name="cId">Comment's Id</param>
-        /// <param name="mId">New's Id</param>
+        /// <param name="nId">New's Id</param>
         /// <returns>Redirects to Details Action in New Controller</returns>
         [HttpGet]
         public async Task<IActionResult> AddDislike(Guid cId, Guid nId)

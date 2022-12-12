@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MusiCom.Core.Constants;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.Event;
@@ -8,6 +8,7 @@ using MusiCom.Infrastructure.Data.Entities;
 
 namespace MusiCom.Controllers
 {
+    [Authorize]
     public class PostController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;

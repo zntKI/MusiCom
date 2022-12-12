@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Ganss.Xss;
+using Microsoft.EntityFrameworkCore;
 using MusiCom.Core.Contracts;
 using MusiCom.Core.Models.Genre;
 using MusiCom.Core.Models.Tag;
@@ -13,17 +14,19 @@ namespace MusiCom.Core.Services
     public class TagService : ITagService
     {
         private readonly IRepository repo;
+        private HtmlSanitizer sanitizer;
 
         public TagService(IRepository _repo)
         {
             repo = _repo;
+            sanitizer = new HtmlSanitizer();
         }
 
         public async Task CreateTagAsync(TagViewModel model)
         {
             var tag = new Tag()
             {
-                Name = model.Name,
+                Name = sanitizer.Sanitize(model.Name),
                 DateOfCreation = DateTime.Now,
                 IsDeleted = false
             };
@@ -41,7 +44,7 @@ namespace MusiCom.Core.Services
 
         public async Task EditTagAsync(Tag tag, TagAllViewModel model)
         {
-            tag.Name = model.Name;
+            tag.Name = sanitizer.Sanitize(model.Name);
             tag.DateOfCreation = DateTime.Now;
 
             await repo.SaveChangesAsync();

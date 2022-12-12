@@ -6,24 +6,27 @@ using Microsoft.AspNetCore.Http;
 using MusiCom.Infrastructure.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using MusiCom.Infrastructure.Data.Entities;
+using Ganss.Xss;
 
 namespace MusiCom.Core.Services
 {
     public class EventService : IEventService
     {
         private readonly IRepository repo;
+        private HtmlSanitizer sanitizer;
 
         public EventService(IRepository _repo)
         {
             repo = _repo;
+            sanitizer = new HtmlSanitizer();
         }
 
         public async Task CreateEventAsync(EventAddViewModel model, ApplicationUser artist, IFormFile image)
         {
             Event eventt = new Event()
             {
-                Title = model.Title,
-                Description = model.Description,
+                Title = sanitizer.Sanitize(model.Title),
+                Description = sanitizer.Sanitize(model.Description),
                 GenreId = model.GenreId,
                 ArtistId = artist.Id,
                 Artist = artist,
@@ -128,14 +131,13 @@ namespace MusiCom.Core.Services
             return await repo.GetByIdAsync<Event>(id);
         }
 
-        public async Task<EventDetailsViewModel> GetEventByIdForDetailsAsync(Guid id)
+        public async Task<EventDetailsViewModel> GetEventByIdForDetailsAsync(Event entity)
         {
-            var entity = await repo.GetByIdAsync<Event>(id);
             var artist = await repo.GetByIdAsync<ApplicationUser>(entity.ArtistId);
 
             EventDetailsViewModel model = new EventDetailsViewModel()
             {
-                Id = id,
+                Id = entity.Id,
                 Image = entity.Image,
                 Title = entity.Title,
                 Description = entity.Description,

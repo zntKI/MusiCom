@@ -14,7 +14,7 @@ namespace MusiCom.Core.Models.New
         [StringLength(NewTitleMaxLength, MinimumLength = NewTitleMinLength, ErrorMessage = "The name field must be between {2} and {1} symbols long.")]
         public string Title { get; set; } = null!;
 
-        public byte[] TitleImage { get; set; }
+        public byte[]? TitleImage { get; set; }
 
         [Required]
         public string Content { get; set; } = null!;

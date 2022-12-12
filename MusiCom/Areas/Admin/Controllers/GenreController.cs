@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MusiCom.Core.Constants;
 using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Genre;
@@ -99,6 +98,12 @@ namespace MusiCom.Areas.Admin.Controllers
                 return View(model);
             }
 
+            if ((await genreService.GetGenreByIdAsync(id)) == null)
+            {
+                TempData[MessageConstant.WarningMessage] = "Not found!";
+                return RedirectToAction("All");
+            }
+
             await genreService.EditGenreAsync(id, model);
 
             TempData[MessageConstant.SuccessMessage] = "Successfully edited Genre";
@@ -116,7 +121,7 @@ namespace MusiCom.Areas.Admin.Controllers
         {
             if ((await genreService.GetGenreByIdAsync(id)) == null)
             {
-                TempData[MessageConstant.ErrorMessage] = "There is no such Genre";
+                TempData[MessageConstant.WarningMessage] = "Not found!";
 
                 return RedirectToAction("All");
             }

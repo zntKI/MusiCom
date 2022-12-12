@@ -20,8 +20,7 @@ namespace MusiCom.Core.Models.Event
         [MaxLength(DescriptionMaxLength)]
         public string Description { get; set; } = null!;
 
-        [Required]
-        public byte[] Image { get; set; } = null!;
+        public byte[]? Image { get; set; }
 
         [Required]
         public Guid GenreId { get; set; }

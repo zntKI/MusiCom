@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Ganss.Xss;
+using Microsoft.EntityFrameworkCore;
 using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Genre;
 using MusiCom.Infrastructure.Data.Common;
@@ -13,17 +14,19 @@ namespace MusiCom.Core.Services.Admin
     public class GenreService : IGenreService
     {
         private readonly IRepository repo;
+        private HtmlSanitizer sanitizer;
 
         public GenreService(IRepository _repo)
         {
             repo = _repo;
+            sanitizer = new HtmlSanitizer();
         }
 
         public async Task CreateGenreAsync(GenreViewModel model)
         {
             var genre = new Genre()
             {
-                Name = model.Name,
+                Name = sanitizer.Sanitize(model.Name),
                 DateOfCreation = DateTime.Now,
                 IsDeleted = false
             };
@@ -56,8 +59,7 @@ namespace MusiCom.Core.Services.Admin
         {
             var genre = await GetGenreByIdAsync(id);
 
-            genre.Name = model.Name;
-            genre.DateOfCreation = DateTime.Now;
+            genre.Name = sanitizer.Sanitize(model.Name);
 
             await repo.SaveChangesAsync();
         }

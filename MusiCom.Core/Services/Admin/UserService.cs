@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder.Internal;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MusiCom.Core.Contracts.Admin;
 using MusiCom.Core.Models.Admin.User;
 using MusiCom.Infrastructure.Data.Common;
