@@ -11,8 +11,6 @@ namespace MusiCom.Core.Models.New
 
         public string? Genre { get; set; }
 
-        public string? Tag { get; set; }
-
         [Display(Name = "Search by text")]
         public string? SearchTerm { get; set; }
 
@@ -20,9 +18,7 @@ namespace MusiCom.Core.Models.New
 
         public int TotalNewsCount { get; set; }
 
-        public IEnumerable<string> Genres { get; set; }
-
-        public IEnumerable<string> Tags { get; set; }
+        public IEnumerable<string> Genres { get; set; } = null!;
 
         public IEnumerable<NewAllNewViewModel> News { get; set; } = new List<NewAllNewViewModel>();
     }

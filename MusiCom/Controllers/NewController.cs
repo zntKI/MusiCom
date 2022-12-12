@@ -41,7 +41,6 @@ namespace MusiCom.Controllers
         {
             var queryResult = await newService.GetAllNewsAsync(
                 query.Genre,
-                query.Tag,
                 query.SearchTerm,
                 query.CurrentPage,
                 NewAllQueryModel.NewPerPage);
@@ -51,8 +50,6 @@ namespace MusiCom.Controllers
 
             var newGenres = await genreService.GetAllGenreNamesAsync();
             query.Genres = newGenres;
-            var newTags = await tagService.GetAllTagNamesAsync();
-            query.Tags = newTags;
 
             return View(query);
         }

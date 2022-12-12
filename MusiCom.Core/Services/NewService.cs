@@ -77,7 +77,7 @@ namespace MusiCom.Core.Services
                     .ToList();
         }
 
-        public async Task<NewQueryServiceModel> GetAllNewsAsync(string? genre = null, string? tag = null, string? searchTerm = null, int currentPage = 1, int newsPerPage = 1)
+        public async Task<NewQueryServiceModel> GetAllNewsAsync(string? genre = null, string? searchTerm = null, int currentPage = 1, int newsPerPage = 1)
         {
             var newsQuery = repo.AllReadonly<New>()
                 .Where(n => n.IsDeleted == false);
@@ -86,12 +86,6 @@ namespace MusiCom.Core.Services
             {
                 newsQuery = repo.AllReadonly<New>()
                     .Where(e => e.Genre.Name == genre);
-            }
-
-            if (!String.IsNullOrWhiteSpace(tag))
-            {
-                newsQuery = repo.AllReadonly<New>()
-                    .Where(e => e.Tags.Any(t => t.Tag.Name == tag));
             }
 
             if (!String.IsNullOrWhiteSpace(searchTerm))

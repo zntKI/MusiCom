@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using MusiCom.Core.Models.Event;
 using MusiCom.Core.Models.New;
 using MusiCom.Infrastructure.Data.Entities.News;
-using static MusiCom.Infrastructure.Data.DataConstraints;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MusiCom.Core.Contracts
 {
@@ -23,7 +20,6 @@ namespace MusiCom.Core.Contracts
         /// <returns>Model which will be used for the Visualisation in the View</returns>
         Task<NewQueryServiceModel> GetAllNewsAsync(
             string? genre = null,
-            string? tag = null,
             string? searchTerm = null,
             int currentPage = 1,
             int newsPerPage = 1);

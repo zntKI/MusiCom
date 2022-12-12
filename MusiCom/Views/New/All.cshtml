@@ -27,19 +27,6 @@
             </div>
         </div>
 
-        <div class="form-group col-md-3 d-flex justify-content-between">
-            <div class="form-group">
-                <label asp-for="Tag"></label>
-                <select asp-for="Tag" class="form-control">
-                    <option value="">All</option>
-                    @foreach (var tag in Model.Tags)
-                    {
-                        <option value="@tag">@tag</option>
-                    }
-                </select>
-            </div>
-        </div>
-
         <div class="form-group col-md-3">
             <label asp-for="SearchTerm"></label>
             <input asp-for="SearchTerm" class="form-control" placeholder="...">
@@ -85,7 +72,6 @@
            asp-action="All"
            asp-route-currentPage="@previousPage"
            asp-route-genre="@Model.Genre"
-           asp-route-tag="@Model.Tag"
            asp-route-searchTerm="@Model.SearchTerm"><<</a>
     </div>
 
@@ -101,7 +87,6 @@
            asp-action="All"
            asp-route-currentPage="@(Model.CurrentPage + 1)"
            asp-route-genre="@Model.Genre"
-           asp-route-tag="@Model.Tag"
            asp-route-searchTerm="@Model.SearchTerm">>></a>
     </div>
 </div>

@@ -60,6 +60,19 @@ namespace MusiCom.Controllers
                 return View(model);
             }
 
+            var usersEmail = userManager.Users.ToList().Any(u => u.Email == model.Email);
+            if (usersEmail)
+            {
+                TempData[MessageConstant.ErrorMessage] = "An User with such Email already exists";
+                return View(model);
+            }
+            var usersUserName = userManager.Users.ToList().Any(u => u.UserName == model.UserName);
+            if (usersUserName)
+            {
+                TempData[MessageConstant.ErrorMessage] = "An User with such UserName already exists";
+                return View(model);
+            }
+
             var user = new ApplicationUser
             {
                 FirstName= sanitizer.Sanitize(model.FirstName),
