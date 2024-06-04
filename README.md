@@ -1,1 +1,4 @@
-# MusiCom - a platform where Musical News and Events can be shared
+# MusiCom
+
+A web application where Musical News and Events can be shared
+
